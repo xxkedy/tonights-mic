@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#0b0b0e" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<link rel="apple-touch-icon" href="/icon-180.png" />
+<link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png" />
+<title>Tonight's Mic</title>
+<style>
+  :root{
+    --bg:#0b0b0e; --bg2:#15151b; --bg3:#1d1d25;
+    --line:#2a2a34;
+    --amber:#ff9e2c; --amber-soft:#ffc06b;
+    --cyan:#22d3ee; --orange:#ff6b35; --green:#4ade80; --pink:#ff5c8a;
+    --text:#f5f3ee; --muted:#9a9aa6;
+    --glow-amber:0 0 24px rgba(255,158,44,.45);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    background:
+      radial-gradient(120% 60% at 50% -10%, rgba(255,158,44,.10), transparent 60%),
+      radial-gradient(90% 50% at 90% 110%, rgba(34,211,238,.08), transparent 60%),
+      var(--bg);
+    color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Segoe UI",Roboto,sans-serif;
+    min-height:100dvh;
+    padding:max(18px,env(safe-area-inset-top)) 16px calc(28px + env(safe-area-inset-bottom));
+    max-width:520px;margin:0 auto;
+  }
+  /* ---------- header ---------- */
+  .brand{text-align:center;margin:6px 0 14px}
+  .brand h1{
+    margin:0;font-size:clamp(30px,9vw,42px);font-weight:900;letter-spacing:2px;
+    color:var(--amber);text-shadow:var(--glow-amber);line-height:1;
+  }
+  .brand h1 .m{color:var(--cyan);text-shadow:0 0 24px rgba(34,211,238,.45)}
+  .brand p{margin:6px 0 0;color:var(--muted);font-size:13px;letter-spacing:3px;font-weight:700}
+  /* ---------- fire log ---------- */
+  .fire{
+    background:linear-gradient(180deg,var(--bg2),var(--bg));
+    border:1px solid var(--line);border-radius:20px;
+    padding:16px;margin-bottom:18px;
+    display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:center;
+  }
+  .fire .big{display:flex;align-items:baseline;gap:6px}
+  .fire .flame{font-size:34px;filter:drop-shadow(0 0 10px rgba(255,107,53,.6))}
+  .fire .num{font-size:clamp(46px,15vw,64px);font-weight:900;line-height:.9;color:var(--amber);text-shadow:var(--glow-amber)}
+  .fire .num.cold{color:var(--muted);text-shadow:none}
+  .fire .flame.cold{filter:grayscale(1) opacity(.5)}
+  .fire .meta .unit{font-size:13px;color:var(--muted);font-weight:700;margin-top:2px}
+  .fire .side{text-align:right;font-size:12px;color:var(--muted);line-height:1.7}
+  .fire .side b{color:var(--text);font-weight:800}
+  .fire .today{display:inline-flex;align-items:center;gap:5px;padding:4px 9px;border-radius:999px;font-weight:800;font-size:12px}
+  .fire .today.done{background:rgba(74,222,128,.14);color:var(--green)}
+  .fire .today.todo{background:rgba(255,158,44,.14);color:var(--amber-soft)}
+  /* ---------- gacha ---------- */
+  .gacha{
+    width:100%;border:none;cursor:pointer;
+    background:linear-gradient(180deg,var(--amber),#e97e11);
+    color:#231400;font-weight:900;letter-spacing:1px;
+    font-size:19px;padding:20px;border-radius:18px;
+    box-shadow:0 10px 30px rgba(255,158,44,.28),inset 0 1px 0 rgba(255,255,255,.4);
+    display:flex;align-items:center;justify-content:center;gap:10px;
+    transition:transform .08s ease, box-shadow .2s ease;
+  }
+  .gacha:active{transform:translateY(2px) scale(.99);box-shadow:0 4px 14px rgba(255,158,44,.3)}
+  .gacha .mic{font-size:22px}
+  .gacha.rolling{animation:pulse .5s ease}
+  @keyframes pulse{0%{transform:scale(1)}40%{transform:scale(1.03)}100%{transform:scale(1)}}
+  .hint{text-align:center;color:var(--muted);font-size:12px;margin:10px 0 0}
+  /* ---------- result ---------- */
+  .card{
+    margin-top:18px;background:var(--bg2);border:1px solid var(--line);
+    border-radius:20px;padding:18px;
+    opacity:0;transform:translateY(10px);transition:opacity .3s ease,transform .3s ease;
+  }
+  .card.show{opacity:1;transform:none}
+  .card .tag{
+    display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:900;
+    letter-spacing:1.5px;padding:5px 11px;border-radius:999px;
+    border:1px solid currentColor;margin-bottom:12px;
+  }
+  .card h2{margin:0;font-size:clamp(22px,6.5vw,28px);font-weight:900;line-height:1.15}
+  .card .ja{margin:5px 0 0;color:var(--muted);font-size:14px;font-weight:600}
+  .sep{height:1px;background:var(--line);margin:16px 0}
+  .block .lbl{font-size:12px;font-weight:900;letter-spacing:1px;color:var(--muted);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+  .quote{
+    background:var(--bg3);border-left:3px solid var(--amber);
+    border-radius:0 12px 12px 0;padding:13px 14px;font-size:16px;line-height:1.5;font-weight:600;
+  }
+  .quote.cyan{border-left-color:var(--cyan)}
+  .copy{
+    margin-top:10px;width:100%;border:1px solid var(--amber);
+    background:rgba(255,158,44,.10);color:var(--amber-soft);
+    font-weight:800;font-size:14px;padding:12px;border-radius:12px;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;gap:7px;transition:background .15s;
+  }
+  .copy:active{background:rgba(255,158,44,.22)}
+  .copy.ok{border-color:var(--green);color:var(--green);background:rgba(74,222,128,.12)}
+  .voice{
+    margin-top:14px;width:100%;border:none;cursor:pointer;
+    background:linear-gradient(180deg,var(--cyan),#0bb6d4);color:#00252b;
+    font-weight:900;font-size:16px;letter-spacing:.5px;padding:16px;border-radius:14px;
+    box-shadow:0 8px 22px rgba(34,211,238,.25);
+    display:flex;align-items:center;justify-content:center;gap:9px;transition:transform .08s;
+  }
+  .voice:active{transform:translateY(2px)}
+  /* ---------- toast ---------- */
+  .toast{
+    position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(20px);
+    background:#111;border:1px solid var(--green);color:var(--green);
+    padding:11px 18px;border-radius:999px;font-weight:800;font-size:14px;
+    opacity:0;pointer-events:none;transition:.25s;z-index:50;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .foot{text-align:center;color:#5a5a66;font-size:11px;margin-top:22px;letter-spacing:.5px}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+  :focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+</style>
+</head>
+<body>
+  <div class="brand">
+    <h1>TONIGHT'S <span class="m">MIC</span></h1>
+    <p>寝る前の一本 · 5 MIN VOICE</p>
+  </div>
+
+  <div class="fire" id="fire">
+    <div class="big">
+      <span class="flame" id="flame">🔥</span>
+      <span class="num" id="streakNum">0</span>
+      <div class="meta"><div class="unit">日連続</div></div>
+    </div>
+    <div class="side">
+      <span class="today todo" id="todayBadge">今夜はまだ</span><br>
+      通算 <b id="totalDays">0</b> 日 · 最長 <b id="bestStreak">0</b> 日
+    </div>
+  </div>
+
+  <button class="gacha" id="gacha" aria-label="今夜のテーマを引く">
+    <span class="mic">🎤</span><span id="gachaLabel">PULL TONIGHT'S THEME</span>
+  </button>
+  <p class="hint">ボタンで今夜のお題ガチャ → 英語で5分話す</p>
+
+  <div class="card" id="card" hidden>
+    <span class="tag" id="tag"></span>
+    <h2 id="title"></h2>
+    <p class="ja" id="ja"></p>
+    <div class="sep"></div>
+    <div class="block">
+      <div class="lbl">🎤 YOUR OPENER — これを口火に</div>
+      <div class="quote" id="opener"></div>
+      <button class="copy" id="copy"><span id="copyLabel">📋 コピーして口火にする</span></button>
+    </div>
+    <div class="sep"></div>
+    <div class="block">
+      <div class="lbl">💬 CLAUDE WILL ASK — こう返ってくる</div>
+      <div class="quote cyan" id="q"></div>
+    </div>
+    <button class="voice" id="voice">🗣️ 音声モードで話す →</button>
+  </div>
+
+  <div class="foot">Ask Claude to fix your English after · 記録は端末に保存</div>
+  <div class="toast" id="toast">Copied ✓</div>
+
+<script>
+/* ---------- data ---------- */
+const CATS = {
+  music:{label:'MUSIC', emoji:'🎵', color:'#ff9e2c'},
+  daily:{label:'DAILY', emoji:'☀️', color:'#22d3ee'},
+  gym:  {label:'GYM',   emoji:'💪', color:'#ff6b35'},
+  work: {label:'WORK',  emoji:'💼', color:'#4ade80'},
+  wild: {label:'WILD',  emoji:'🌀', color:'#ff5c8a'},
+};
+const THEMES = [
+  {cat:'music',title:"The beat I made today",ja:"今日作ったビート",opener:"Yo, I wanna tell you about a beat I made today. It's got this dark 808 vibe.",q:"Nice — what mood were you going for with it?"},
+  {cat:'music',title:"An artist I'm hooked on",ja:"今ハマってるアーティスト",opener:"There's this artist I can't stop listening to right now. Let me put you on.",q:"Who is it, and what got you into them?"},
+  {cat:'music',title:"My dream collab",ja:"夢のコラボ相手",opener:"If I could work with any artist, dead or alive, I already know who I'd pick.",q:"Oh interesting — who's at the top of your list?"},
+  {cat:'music',title:"Why I'm called kedy",ja:"kedyという名前の由来",opener:"People always ask about my rap name. There's a story behind 'kedy'.",q:"Alright, I'm curious — where does the name come from?"},
+  {cat:'music',title:"My studio setup",ja:"制作環境の自慢",opener:"Let me flex my home studio setup real quick. I've been dialing it in for a while.",q:"Sounds serious — what's the one piece of gear you can't live without?"},
+  {cat:'music',title:"A line stuck in my head",ja:"頭から離れないパンチライン",opener:"There's one lyric that's been living rent-free in my head all day.",q:"Let's hear it — what makes that line hit so hard for you?"},
+
+  {cat:'daily',title:"What I ate today",ja:"今日食べたもの",opener:"Let me walk you through everything I ate today. Some of it was questionable.",q:"Ha — what was the questionable one?"},
+  {cat:'daily',title:"The weirdest thing today",ja:"今日いちばん変だったこと",opener:"Something kinda weird happened to me today and I gotta tell someone.",q:"Okay now you have to tell me — what happened?"},
+  {cat:'daily',title:"My weekend plan",ja:"週末の予定",opener:"I've got plans for the weekend that I'm actually excited about.",q:"Nice — what's the main thing you're looking forward to?"},
+  {cat:'daily',title:"What annoyed me today",ja:"今日イラっとしたこと",opener:"One thing really got on my nerves today. Small thing, but still.",q:"Let it out — what set you off?"},
+  {cat:'daily',title:"My morning routine",ja:"朝のルーティン",opener:"Let me describe my morning routine. It's kind of a whole system.",q:"A system, huh — what's the first thing you do when you wake up?"},
+  {cat:'daily',title:"If I had a free day",ja:"1日まるごと休みなら",opener:"If I had one completely free day, no work at all, I know exactly how I'd spend it.",q:"Alright, paint the picture — how does that day start?"},
+
+  {cat:'gym',title:"Today's workout",ja:"今日のトレ",opener:"Just wanna break down today's workout. Legs were involved. Regret was too.",q:"Respect — how are you feeling right now, honestly?"},
+  {cat:'gym',title:"My next PR goal",ja:"次に狙ってるPR",opener:"There's a lift I'm trying to hit. It's been taunting me for weeks.",q:"What's the lift, and how close are you?"},
+  {cat:'gym',title:"My home gym",ja:"ホームジム紹介",opener:"Let me give you a tour of my home gym. Built it up piece by piece.",q:"That's dedication — what was your first piece of equipment?"},
+  {cat:'gym',title:"The cheat meal I want",ja:"食べたいチートミール",opener:"I've been dreaming about one specific cheat meal all week.",q:"Okay, describe it in detail — make me hungry."},
+  {cat:'gym',title:"Sore muscle report",ja:"筋肉痛レポート",opener:"I need to file a full report on which muscles are betraying me today.",q:"Ha — which one hurts the most right now?"},
+  {cat:'gym',title:"When motivation dies",ja:"やる気が切れた日",opener:"Some days the motivation is just gone. Let me be real about that.",q:"I feel that — what usually gets you back on track?"},
+
+  {cat:'work',title:"Today's tough customer",ja:"今日の手ごわい客",opener:"Had a customer today that really tested my patience. Bank life, man.",q:"Oof — what did they want that made it so tough?"},
+  {cat:'work',title:"My job, in English",ja:"銀行の仕事を英語で",opener:"Let me try to explain what I actually do at the bank, in English.",q:"Go for it — what's the part people don't get about your job?"},
+  {cat:'work',title:"A money tip I know",ja:"知ってるお金の豆知識",opener:"Working at a bank, I've picked up one money tip everyone should know.",q:"Alright, teach me — what's the tip?"},
+  {cat:'work',title:"Forex, made simple",ja:"外為をやさしく説明",opener:"I handle foreign exchange at work. Let me explain it like you're five.",q:"Perfect — so why do exchange rates even move?"},
+  {cat:'work',title:"A mistake I made",ja:"やらかした話",opener:"I made a mistake at work once that still makes me cringe.",q:"We've all been there — what happened?"},
+  {cat:'work',title:"If I quit for music",ja:"仕事辞めて音楽やったら",opener:"Sometimes I imagine quitting the bank to do music full time. Let's go there.",q:"Big move — what would day one of that life look like?"},
+
+  {cat:'wild',title:"If I got famous",ja:"もし有名になったら",opener:"Let's say my music blows up and I get famous. Here's how I'd handle it.",q:"Love it — what's the first thing you'd buy?"},
+  {cat:'wild',title:"One superpower",ja:"超能力を1つ選ぶなら",opener:"If I could pick one superpower, I've already made my decision.",q:"Which one — and why that over flying?"},
+  {cat:'wild',title:"Where I'd time travel",ja:"タイムトラベルの行き先",opener:"If I had a time machine, I know exactly which era I'm going to.",q:"Ooh — past or future, and where do you land?"},
+  {cat:'wild',title:"My perfect city",ja:"理想の街をつくるなら",opener:"Let me design my perfect city from scratch. My rules, my world.",q:"Sounds ideal — what's the one thing every street has?"},
+  {cat:'wild',title:"Zombie apocalypse plan",ja:"ゾンビが来たら",opener:"If zombies showed up tomorrow, I actually have a plan. Kind of.",q:"Alright, survivor — what's your first move?"},
+  {cat:'wild',title:"If I won the lottery",ja:"宝くじが当たったら",opener:"Say I win the lottery tomorrow. Here's the plan, step by step.",q:"Let's dream — what's the very first thing you do?"},
+];
+
+/* ---------- storage (safe) ---------- */
+const mem={};
+const store={
+  get(k){try{return localStorage.getItem(k)}catch(e){return k in mem?mem[k]:null}},
+  set(k,v){try{localStorage.setItem(k,v)}catch(e){mem[k]=v}}
+};
+function dstr(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+const today=dstr(new Date());
+const yday=(()=>{const d=new Date();d.setDate(d.getDate()-1);return dstr(d)})();
+
+let streak=+(store.get('tm_streak')||0);
+let best=+(store.get('tm_best')||0);
+let total=+(store.get('tm_total')||0);
+let last=store.get('tm_last')||'';
+let lastIdx=-1;
+
+function renderFire(){
+  const done=last===today;
+  document.getElementById('streakNum').textContent=streak;
+  document.getElementById('streakNum').classList.toggle('cold',streak===0);
+  document.getElementById('flame').classList.toggle('cold',streak===0);
+  document.getElementById('totalDays').textContent=total;
+  document.getElementById('bestStreak').textContent=best;
+  const b=document.getElementById('todayBadge');
+  if(done){b.className='today done';b.textContent='今夜は✓済み'}
+  else{b.className='today todo';b.textContent='今夜はまだ'}
+}
+function markToday(){
+  if(last===today)return;            // 1日1点灯（正直な記録）
+  streak = (last===yday)?streak+1:1;
+  best=Math.max(best,streak);
+  total+=1; last=today;
+  store.set('tm_streak',streak);store.set('tm_best',best);
+  store.set('tm_total',total);store.set('tm_last',last);
+}
+
+/* ---------- gacha ---------- */
+const card=document.getElementById('card');
+function roll(){
+  let i;do{i=Math.floor(Math.random()*THEMES.length)}while(i===lastIdx&&THEMES.length>1);
+  lastIdx=i;const t=THEMES[i];const c=CATS[t.cat];
+  const tag=document.getElementById('tag');
+  tag.style.color=c.color;tag.textContent='';
+  tag.append(c.emoji+' '+c.label);
+  document.getElementById('title').textContent=t.title;
+  document.getElementById('ja').textContent=t.ja;
+  document.getElementById('opener').textContent='“'+t.opener+'”';
+  document.getElementById('q').textContent='“'+t.q+'”';
+  document.getElementById('opener').dataset.raw=t.opener;
+  resetCopy();
+  card.hidden=false;
+  requestAnimationFrame(()=>card.classList.add('show'));
+  markToday();renderFire();
+  document.getElementById('gachaLabel').textContent='PULL AGAIN';
+}
+const g=document.getElementById('gacha');
+g.addEventListener('click',()=>{
+  g.classList.remove('rolling');void g.offsetWidth;g.classList.add('rolling');
+  card.classList.remove('show');
+  setTimeout(roll,120);
+});
+
+/* ---------- copy ---------- */
+function resetCopy(){const b=document.getElementById('copy');b.classList.remove('ok');document.getElementById('copyLabel').textContent='📋 コピーして口火にする'}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),1600)}
+async function copyText(txt){
+  try{await navigator.clipboard.writeText(txt);return true}
+  catch(e){try{const ta=document.createElement('textarea');ta.value=txt;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();return true}catch(_){return false}}
+}
+document.getElementById('copy').addEventListener('click',async()=>{
+  const raw=document.getElementById('opener').dataset.raw||'';
+  const ok=await copyText(raw);
+  if(ok){const b=document.getElementById('copy');b.classList.add('ok');document.getElementById('copyLabel').textContent='✓ コピーした';toast('Copied ✓')}
+  else toast('コピー失敗…手動でどうぞ');
+});
+
+/* ---------- voice ---------- */
+document.getElementById('voice').addEventListener('click',async()=>{
+  const raw=document.getElementById('opener').dataset.raw||'';
+  await copyText(raw);
+  toast('口火をコピー · Claudeで音声モードON');
+});
+
+renderFire();
+</script>
+</body>
+</html>
