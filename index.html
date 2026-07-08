@@ -14,7 +14,7 @@
     --bg:#0b0b0e; --bg2:#15151b; --bg3:#1d1d25;
     --line:#2a2a34;
     --amber:#ff9e2c; --amber-soft:#ffc06b;
-    --cyan:#22d3ee; --orange:#ff6b35; --green:#4ade80; --pink:#ff5c8a;
+    --cyan:#22d3ee; --cyan-soft:#7fe6f5; --orange:#ff6b35; --green:#4ade80; --pink:#ff5c8a;
     --text:#f5f3ee; --muted:#9a9aa6;
     --glow-amber:0 0 24px rgba(255,158,44,.45);
   }
@@ -31,91 +31,71 @@
     padding:max(18px,env(safe-area-inset-top)) 16px calc(28px + env(safe-area-inset-bottom));
     max-width:520px;margin:0 auto;
   }
-  /* ---------- header ---------- */
   .brand{text-align:center;margin:6px 0 14px}
-  .brand h1{
-    margin:0;font-size:clamp(30px,9vw,42px);font-weight:900;letter-spacing:2px;
-    color:var(--amber);text-shadow:var(--glow-amber);line-height:1;
-  }
+  .brand h1{margin:0;font-size:clamp(28px,8.5vw,40px);font-weight:900;letter-spacing:2px;color:var(--amber);text-shadow:var(--glow-amber);line-height:1}
   .brand h1 .m{color:var(--cyan);text-shadow:0 0 24px rgba(34,211,238,.45)}
-  .brand p{margin:6px 0 0;color:var(--muted);font-size:13px;letter-spacing:3px;font-weight:700}
-  /* ---------- fire log ---------- */
-  .fire{
-    background:linear-gradient(180deg,var(--bg2),var(--bg));
-    border:1px solid var(--line);border-radius:20px;
-    padding:16px;margin-bottom:18px;
-    display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:center;
-  }
+  .brand p{margin:6px 0 0;color:var(--muted);font-size:12px;letter-spacing:3px;font-weight:700}
+  .fire{background:linear-gradient(180deg,var(--bg2),var(--bg));border:1px solid var(--line);border-radius:18px;padding:14px 16px;margin-bottom:14px;display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:center}
   .fire .big{display:flex;align-items:baseline;gap:6px}
-  .fire .flame{font-size:34px;filter:drop-shadow(0 0 10px rgba(255,107,53,.6))}
-  .fire .num{font-size:clamp(46px,15vw,64px);font-weight:900;line-height:.9;color:var(--amber);text-shadow:var(--glow-amber)}
+  .fire .flame{font-size:30px;filter:drop-shadow(0 0 10px rgba(255,107,53,.6))}
+  .fire .num{font-size:clamp(40px,13vw,56px);font-weight:900;line-height:.9;color:var(--amber);text-shadow:var(--glow-amber)}
   .fire .num.cold{color:var(--muted);text-shadow:none}
   .fire .flame.cold{filter:grayscale(1) opacity(.5)}
-  .fire .meta .unit{font-size:13px;color:var(--muted);font-weight:700;margin-top:2px}
+  .fire .meta .unit{font-size:12px;color:var(--muted);font-weight:700;margin-top:2px}
   .fire .side{text-align:right;font-size:12px;color:var(--muted);line-height:1.7}
   .fire .side b{color:var(--text);font-weight:800}
   .fire .today{display:inline-flex;align-items:center;gap:5px;padding:4px 9px;border-radius:999px;font-weight:800;font-size:12px}
   .fire .today.done{background:rgba(74,222,128,.14);color:var(--green)}
   .fire .today.todo{background:rgba(255,158,44,.14);color:var(--amber-soft)}
-  /* ---------- gacha ---------- */
-  .gacha{
-    width:100%;border:none;cursor:pointer;
-    background:linear-gradient(180deg,var(--amber),#e97e11);
-    color:#231400;font-weight:900;letter-spacing:1px;
-    font-size:19px;padding:20px;border-radius:18px;
-    box-shadow:0 10px 30px rgba(255,158,44,.28),inset 0 1px 0 rgba(255,255,255,.4);
-    display:flex;align-items:center;justify-content:center;gap:10px;
-    transition:transform .08s ease, box-shadow .2s ease;
-  }
+  /* calendar */
+  .cal{background:var(--bg2);border:1px solid var(--line);border-radius:18px;padding:14px 14px 16px;margin-bottom:16px}
+  .cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+  .cal-head .mlabel{font-size:15px;font-weight:900;letter-spacing:.5px}
+  .cal-nav{background:var(--bg3);border:1px solid var(--line);color:var(--text);width:34px;height:34px;border-radius:10px;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+  .cal-nav:active{background:#26262f}
+  .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+  .cal-dow{text-align:center;font-size:11px;font-weight:800;color:var(--muted);padding:2px 0}
+  .cal-dow.sat{color:var(--cyan-soft)} .cal-dow.sun{color:var(--pink)}
+  .cal-cell{aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:10px;font-size:13px;font-weight:700;color:var(--text);background:var(--bg3);cursor:pointer;position:relative;transition:transform .06s}
+  .cal-cell:active{transform:scale(.92)}
+  .cal-cell.empty{background:none;cursor:default}
+  .cal-cell.sat{color:var(--cyan-soft)} .cal-cell.sun{color:var(--pink)}
+  .cal-cell.done{background:var(--amber);color:#231400;font-weight:900}
+  .cal-cell.done.sat,.cal-cell.done.sun{color:#231400}
+  .cal-cell.today{box-shadow:0 0 0 2px var(--cyan)}
+  .cal-cell.future{opacity:.32;cursor:default}
+  .cal-legend{display:flex;gap:14px;justify-content:center;margin-top:12px;font-size:11px;color:var(--muted)}
+  .cal-legend span{display:inline-flex;align-items:center;gap:5px}
+  .cal-legend .dot{width:11px;height:11px;border-radius:3px;display:inline-block}
+  .cal-legend .dot.done{background:var(--amber)} .cal-legend .dot.ring{box-shadow:inset 0 0 0 2px var(--cyan)}
+  .cal-tip{text-align:center;font-size:11px;color:#5a5a66;margin-top:8px}
+  .gacha{width:100%;border:none;cursor:pointer;background:linear-gradient(180deg,var(--amber),#e97e11);color:#231400;font-weight:900;letter-spacing:1px;font-size:19px;padding:20px;border-radius:18px;box-shadow:0 10px 30px rgba(255,158,44,.28),inset 0 1px 0 rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center;gap:10px;transition:transform .08s ease, box-shadow .2s ease}
   .gacha:active{transform:translateY(2px) scale(.99);box-shadow:0 4px 14px rgba(255,158,44,.3)}
   .gacha .mic{font-size:22px}
   .gacha.rolling{animation:pulse .5s ease}
   @keyframes pulse{0%{transform:scale(1)}40%{transform:scale(1.03)}100%{transform:scale(1)}}
   .hint{text-align:center;color:var(--muted);font-size:12px;margin:10px 0 0}
-  /* ---------- result ---------- */
-  .card{
-    margin-top:18px;background:var(--bg2);border:1px solid var(--line);
-    border-radius:20px;padding:18px;
-    opacity:0;transform:translateY(10px);transition:opacity .3s ease,transform .3s ease;
-  }
+  .card{margin-top:18px;background:var(--bg2);border:1px solid var(--line);border-radius:20px;padding:18px;opacity:0;transform:translateY(10px);transition:opacity .3s ease,transform .3s ease}
   .card.show{opacity:1;transform:none}
-  .card .tag{
-    display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:900;
-    letter-spacing:1.5px;padding:5px 11px;border-radius:999px;
-    border:1px solid currentColor;margin-bottom:12px;
-  }
+  .card .tag{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:900;letter-spacing:1.5px;padding:5px 11px;border-radius:999px;border:1px solid currentColor;margin-bottom:12px}
   .card h2{margin:0;font-size:clamp(22px,6.5vw,28px);font-weight:900;line-height:1.15}
-  .card .ja{margin:5px 0 0;color:var(--muted);font-size:14px;font-weight:600}
+  .card .ja-title{margin:5px 0 0;color:var(--muted);font-size:14px;font-weight:600}
   .sep{height:1px;background:var(--line);margin:16px 0}
   .block .lbl{font-size:12px;font-weight:900;letter-spacing:1px;color:var(--muted);margin-bottom:8px;display:flex;align-items:center;gap:6px}
-  .quote{
-    background:var(--bg3);border-left:3px solid var(--amber);
-    border-radius:0 12px 12px 0;padding:13px 14px;font-size:16px;line-height:1.5;font-weight:600;
-  }
+  .quote{background:var(--bg3);border-left:3px solid var(--amber);border-radius:0 12px 12px 0;padding:13px 14px;font-size:16px;line-height:1.5;font-weight:600}
   .quote.cyan{border-left-color:var(--cyan)}
-  .copy{
-    margin-top:10px;width:100%;border:1px solid var(--amber);
-    background:rgba(255,158,44,.10);color:var(--amber-soft);
-    font-weight:800;font-size:14px;padding:12px;border-radius:12px;cursor:pointer;
-    display:flex;align-items:center;justify-content:center;gap:7px;transition:background .15s;
-  }
+  .copy{margin-top:10px;width:100%;border:1px solid var(--amber);background:rgba(255,158,44,.10);color:var(--amber-soft);font-weight:800;font-size:14px;padding:12px;border-radius:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;transition:background .15s}
   .copy:active{background:rgba(255,158,44,.22)}
   .copy.ok{border-color:var(--green);color:var(--green);background:rgba(74,222,128,.12)}
-  .voice{
-    margin-top:14px;width:100%;border:none;cursor:pointer;
-    background:linear-gradient(180deg,var(--cyan),#0bb6d4);color:#00252b;
-    font-weight:900;font-size:16px;letter-spacing:.5px;padding:16px;border-radius:14px;
-    box-shadow:0 8px 22px rgba(34,211,238,.25);
-    display:flex;align-items:center;justify-content:center;gap:9px;transition:transform .08s;
-  }
+  .ja-toggle{margin-top:9px;background:none;border:1px solid var(--line);color:var(--muted);font-size:12px;font-weight:700;padding:7px 13px;border-radius:999px;cursor:pointer;transition:background .15s}
+  .ja-toggle:active{background:var(--bg3)}
+  .ja-text{margin-top:9px;font-size:14px;color:var(--amber-soft);line-height:1.55;padding:0 2px;display:none}
+  .ja-text.cyan{color:var(--cyan-soft)}
+  .ja-text.show{display:block}
+  .voice{margin-top:16px;width:100%;border:none;cursor:pointer;background:linear-gradient(180deg,var(--cyan),#0bb6d4);color:#00252b;font-weight:900;font-size:16px;letter-spacing:.3px;padding:16px;border-radius:14px;box-shadow:0 8px 22px rgba(34,211,238,.25);display:flex;align-items:center;justify-content:center;gap:9px;transition:transform .08s}
   .voice:active{transform:translateY(2px)}
-  /* ---------- toast ---------- */
-  .toast{
-    position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(20px);
-    background:#111;border:1px solid var(--green);color:var(--green);
-    padding:11px 18px;border-radius:999px;font-weight:800;font-size:14px;
-    opacity:0;pointer-events:none;transition:.25s;z-index:50;
-  }
+  .voice-note{text-align:center;color:var(--muted);font-size:11px;margin:8px 0 0;line-height:1.5}
+  .toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(20px);background:#111;border:1px solid var(--green);color:var(--green);padding:11px 18px;border-radius:999px;font-weight:800;font-size:14px;opacity:0;pointer-events:none;transition:.25s;z-index:50;max-width:90%;text-align:center}
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
   .foot{text-align:center;color:#5a5a66;font-size:11px;margin-top:22px;letter-spacing:.5px}
   @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
@@ -130,7 +110,7 @@
 
   <div class="fire" id="fire">
     <div class="big">
-      <span class="flame" id="flame">🔥</span>
+      <span class="flame" id="flame">&#128293;</span>
       <span class="num" id="streakNum">0</span>
       <div class="meta"><div class="unit">日連続</div></div>
     </div>
@@ -140,162 +120,264 @@
     </div>
   </div>
 
+  <div class="cal">
+    <div class="cal-head">
+      <button class="cal-nav" id="prevM" aria-label="前の月">&#8249;</button>
+      <div class="mlabel" id="mlabel"></div>
+      <button class="cal-nav" id="nextM" aria-label="次の月">&#8250;</button>
+    </div>
+    <div class="cal-grid" id="dowRow"></div>
+    <div class="cal-grid" id="calGrid" style="margin-top:5px"></div>
+    <div class="cal-legend">
+      <span><i class="dot done"></i>やった日</span>
+      <span><i class="dot ring"></i>今日</span>
+    </div>
+    <div class="cal-tip">過去の日をタップで後から記録／取り消しOK</div>
+  </div>
+
   <button class="gacha" id="gacha" aria-label="今夜のテーマを引く">
-    <span class="mic">🎤</span><span id="gachaLabel">PULL TONIGHT'S THEME</span>
+    <span class="mic">&#127908;</span><span id="gachaLabel">PULL TONIGHT'S THEME</span>
   </button>
   <p class="hint">ボタンで今夜のお題ガチャ → 英語で5分話す</p>
 
   <div class="card" id="card" hidden>
     <span class="tag" id="tag"></span>
     <h2 id="title"></h2>
-    <p class="ja" id="ja"></p>
+    <p class="ja-title" id="jaTitle"></p>
     <div class="sep"></div>
     <div class="block">
-      <div class="lbl">🎤 YOUR OPENER — これを口火に</div>
+      <div class="lbl">&#127908; YOUR OPENER — これを口火に</div>
       <div class="quote" id="opener"></div>
-      <button class="copy" id="copy"><span id="copyLabel">📋 コピーして口火にする</span></button>
+      <button class="copy" id="copy"><span id="copyLabel">&#128203; コピーして口火にする</span></button>
+      <button class="ja-toggle" id="openerJaBtn">&#127471;&#127477; 日本語を見る</button>
+      <div class="ja-text" id="openerJa"></div>
     </div>
     <div class="sep"></div>
     <div class="block">
-      <div class="lbl">💬 CLAUDE WILL ASK — こう返ってくる</div>
+      <div class="lbl">&#128172; CLAUDE WILL ASK — こう返ってくる</div>
       <div class="quote cyan" id="q"></div>
+      <button class="ja-toggle" id="qJaBtn">&#127471;&#127477; 日本語を見る</button>
+      <div class="ja-text cyan" id="qJa"></div>
     </div>
-    <button class="voice" id="voice">🗣️ 音声モードで話す →</button>
+    <button class="voice" id="voice">&#128483;&#65039; コピーして Claude を開く →</button>
+    <p class="voice-note">押すと口火をコピー＆Claudeアプリが開く<br>Claudeで音声モードをON → 貼り付けて話そう</p>
   </div>
 
   <div class="foot">Ask Claude to fix your English after · 記録は端末に保存</div>
-  <div class="toast" id="toast">Copied ✓</div>
+  <div class="toast" id="toast">Copied</div>
 
 <script>
-/* ---------- data ---------- */
-const CATS = {
-  music:{label:'MUSIC', emoji:'🎵', color:'#ff9e2c'},
-  daily:{label:'DAILY', emoji:'☀️', color:'#22d3ee'},
-  gym:  {label:'GYM',   emoji:'💪', color:'#ff6b35'},
-  work: {label:'WORK',  emoji:'💼', color:'#4ade80'},
-  wild: {label:'WILD',  emoji:'🌀', color:'#ff5c8a'},
+var CATS={
+  music:{label:'MUSIC', emoji:'\uD83C\uDFB5', color:'#ff9e2c'},
+  daily:{label:'DAILY', emoji:'\u2600\uFE0F', color:'#22d3ee'},
+  gym:  {label:'GYM',   emoji:'\uD83D\uDCAA', color:'#ff6b35'},
+  work: {label:'WORK',  emoji:'\uD83D\uDCBC', color:'#4ade80'},
+  wild: {label:'WILD',  emoji:'\uD83C\uDF00', color:'#ff5c8a'}
 };
-const THEMES = [
-  {cat:'music',title:"The beat I made today",ja:"今日作ったビート",opener:"Yo, I wanna tell you about a beat I made today. It's got this dark 808 vibe.",q:"Nice — what mood were you going for with it?"},
-  {cat:'music',title:"An artist I'm hooked on",ja:"今ハマってるアーティスト",opener:"There's this artist I can't stop listening to right now. Let me put you on.",q:"Who is it, and what got you into them?"},
-  {cat:'music',title:"My dream collab",ja:"夢のコラボ相手",opener:"If I could work with any artist, dead or alive, I already know who I'd pick.",q:"Oh interesting — who's at the top of your list?"},
-  {cat:'music',title:"Why I'm called kedy",ja:"kedyという名前の由来",opener:"People always ask about my rap name. There's a story behind 'kedy'.",q:"Alright, I'm curious — where does the name come from?"},
-  {cat:'music',title:"My studio setup",ja:"制作環境の自慢",opener:"Let me flex my home studio setup real quick. I've been dialing it in for a while.",q:"Sounds serious — what's the one piece of gear you can't live without?"},
-  {cat:'music',title:"A line stuck in my head",ja:"頭から離れないパンチライン",opener:"There's one lyric that's been living rent-free in my head all day.",q:"Let's hear it — what makes that line hit so hard for you?"},
+var THEMES=[
+ {cat:'music',title:"The beat I made today",ja:"今日作ったビート",opener:"Yo, I wanna tell you about a beat I made today. It's got this dark 808 vibe.",oja:"今日作ったビートの話したいんやけど。ダークな808の雰囲気でさ。",q:"Nice — what mood were you going for with it?",qja:"ええやん、どんな雰囲気を狙ったん？"},
+ {cat:'music',title:"An artist I'm hooked on",ja:"今ハマってるアーティスト",opener:"There's this artist I can't stop listening to right now. Let me put you on.",oja:"今ずっと聴いてるアーティストがおって。教えるわ。",q:"Who is it, and what got you into them?",qja:"誰？どうやってハマったん？"},
+ {cat:'music',title:"My dream collab",ja:"夢のコラボ相手",opener:"If I could work with any artist, dead or alive, I already know who I'd pick.",oja:"誰とでもコラボできるなら、もう誰を選ぶか決まってる。",q:"Oh interesting — who's at the top of your list?",qja:"へえ、一番は誰なん？"},
+ {cat:'music',title:"Why I'm called kedy",ja:"kedyという名前の由来",opener:"People always ask about my rap name. There's a story behind 'kedy'.",oja:"ラップネームよく聞かれるんやけど。'kedy'には由来があってさ。",q:"Alright, I'm curious — where does the name come from?",qja:"気になるな、名前どっから来たん？"},
+ {cat:'music',title:"My studio setup",ja:"制作環境の自慢",opener:"Let me flex my home studio setup real quick. I've been dialing it in for a while.",oja:"ホームスタジオの機材ちょっと自慢させて。ずっと調整してきたんよ。",q:"Sounds serious — what's the one piece of gear you can't live without?",qja:"本格的やな、これだけは手放せんって機材は？"},
+ {cat:'music',title:"A line stuck in my head",ja:"頭から離れないパンチライン",opener:"There's one lyric that's been living rent-free in my head all day.",oja:"一日中頭から離れんリリックが1個あってさ。",q:"Let's hear it — what makes that line hit so hard for you?",qja:"聞かせて、その一行なんでそんな刺さるん？"},
 
-  {cat:'daily',title:"What I ate today",ja:"今日食べたもの",opener:"Let me walk you through everything I ate today. Some of it was questionable.",q:"Ha — what was the questionable one?"},
-  {cat:'daily',title:"The weirdest thing today",ja:"今日いちばん変だったこと",opener:"Something kinda weird happened to me today and I gotta tell someone.",q:"Okay now you have to tell me — what happened?"},
-  {cat:'daily',title:"My weekend plan",ja:"週末の予定",opener:"I've got plans for the weekend that I'm actually excited about.",q:"Nice — what's the main thing you're looking forward to?"},
-  {cat:'daily',title:"What annoyed me today",ja:"今日イラっとしたこと",opener:"One thing really got on my nerves today. Small thing, but still.",q:"Let it out — what set you off?"},
-  {cat:'daily',title:"My morning routine",ja:"朝のルーティン",opener:"Let me describe my morning routine. It's kind of a whole system.",q:"A system, huh — what's the first thing you do when you wake up?"},
-  {cat:'daily',title:"If I had a free day",ja:"1日まるごと休みなら",opener:"If I had one completely free day, no work at all, I know exactly how I'd spend it.",q:"Alright, paint the picture — how does that day start?"},
+ {cat:'daily',title:"What I ate today",ja:"今日食べたもの",opener:"Let me walk you through everything I ate today. Some of it was questionable.",oja:"今日食べたもん全部説明させて。ちょっと微妙なのもあった。",q:"Ha — what was the questionable one?",qja:"は、その微妙なやつって何？"},
+ {cat:'daily',title:"The weirdest thing today",ja:"今日いちばん変だったこと",opener:"Something kinda weird happened to me today and I gotta tell someone.",oja:"今日ちょっと変なことあってさ、誰かに言いたい。",q:"Okay now you have to tell me — what happened?",qja:"え、絶対教えて、何があったん？"},
+ {cat:'daily',title:"My weekend plan",ja:"週末の予定",opener:"I've got plans for the weekend that I'm actually excited about.",oja:"週末の予定があって、まじで楽しみなんよ。",q:"Nice — what's the main thing you're looking forward to?",qja:"ええな、一番楽しみなんは何？"},
+ {cat:'daily',title:"What annoyed me today",ja:"今日イラっとしたこと",opener:"One thing really got on my nerves today. Small thing, but still.",oja:"今日1個まじでイラっとしたことあって。小さいことやけどさ。",q:"Let it out — what set you off?",qja:"吐き出しな、何にイラっとしたん？"},
+ {cat:'daily',title:"My morning routine",ja:"朝のルーティン",opener:"Let me describe my morning routine. It's kind of a whole system.",oja:"朝のルーティン説明させて。ほぼシステムになってる。",q:"A system, huh — what's the first thing you do when you wake up?",qja:"システムか、起きて最初にやることは？"},
+ {cat:'daily',title:"If I had a free day",ja:"1日まるごと休みなら",opener:"If I had one completely free day, no work at all, I know exactly how I'd spend it.",oja:"完全に自由な1日があったら、過ごし方はもう決まってる。",q:"Alright, paint the picture — how does that day start?",qja:"ええな、想像させて、その日はどう始まる？"},
 
-  {cat:'gym',title:"Today's workout",ja:"今日のトレ",opener:"Just wanna break down today's workout. Legs were involved. Regret was too.",q:"Respect — how are you feeling right now, honestly?"},
-  {cat:'gym',title:"My next PR goal",ja:"次に狙ってるPR",opener:"There's a lift I'm trying to hit. It's been taunting me for weeks.",q:"What's the lift, and how close are you?"},
-  {cat:'gym',title:"My home gym",ja:"ホームジム紹介",opener:"Let me give you a tour of my home gym. Built it up piece by piece.",q:"That's dedication — what was your first piece of equipment?"},
-  {cat:'gym',title:"The cheat meal I want",ja:"食べたいチートミール",opener:"I've been dreaming about one specific cheat meal all week.",q:"Okay, describe it in detail — make me hungry."},
-  {cat:'gym',title:"Sore muscle report",ja:"筋肉痛レポート",opener:"I need to file a full report on which muscles are betraying me today.",q:"Ha — which one hurts the most right now?"},
-  {cat:'gym',title:"When motivation dies",ja:"やる気が切れた日",opener:"Some days the motivation is just gone. Let me be real about that.",q:"I feel that — what usually gets you back on track?"},
+ {cat:'gym',title:"Today's workout",ja:"今日のトレ",opener:"Just wanna break down today's workout. Legs were involved. Regret was too.",oja:"今日のトレを実況したい。脚やった。後悔もした。",q:"Respect — how are you feeling right now, honestly?",qja:"尊敬するわ、正直今どんな感じ？"},
+ {cat:'gym',title:"My next PR goal",ja:"次に狙ってるPR",opener:"There's a lift I'm trying to hit. It's been taunting me for weeks.",oja:"狙ってる種目があってさ。何週間も俺を煽ってくる。",q:"What's the lift, and how close are you?",qja:"何の種目？あとどれくらいで届く？"},
+ {cat:'gym',title:"My home gym",ja:"ホームジム紹介",opener:"Let me give you a tour of my home gym. Built it up piece by piece.",oja:"ホームジム案内させて。1個ずつ揃えてきたんよ。",q:"That's dedication — what was your first piece of equipment?",qja:"こだわりやな、最初に買った器具は何？"},
+ {cat:'gym',title:"The cheat meal I want",ja:"食べたいチートミール",opener:"I've been dreaming about one specific cheat meal all week.",oja:"今週ずっと、あるチートミールを夢見てる。",q:"Okay, describe it in detail — make me hungry.",qja:"詳しく教えて、腹減らせてくれ。"},
+ {cat:'gym',title:"Sore muscle report",ja:"筋肉痛レポート",opener:"I need to file a full report on which muscles are betraying me today.",oja:"今日どの筋肉が俺を裏切ってるか、全部報告したい。",q:"Ha — which one hurts the most right now?",qja:"は、今一番痛いのはどこ？"},
+ {cat:'gym',title:"When motivation dies",ja:"やる気が切れた日",opener:"Some days the motivation is just gone. Let me be real about that.",oja:"やる気が完全に消える日がある。正直に話すわ。",q:"I feel that — what usually gets you back on track?",qja:"わかる、いつもどうやって立て直すん？"},
 
-  {cat:'work',title:"Today's tough customer",ja:"今日の手ごわい客",opener:"Had a customer today that really tested my patience. Bank life, man.",q:"Oof — what did they want that made it so tough?"},
-  {cat:'work',title:"My job, in English",ja:"銀行の仕事を英語で",opener:"Let me try to explain what I actually do at the bank, in English.",q:"Go for it — what's the part people don't get about your job?"},
-  {cat:'work',title:"A money tip I know",ja:"知ってるお金の豆知識",opener:"Working at a bank, I've picked up one money tip everyone should know.",q:"Alright, teach me — what's the tip?"},
-  {cat:'work',title:"Forex, made simple",ja:"外為をやさしく説明",opener:"I handle foreign exchange at work. Let me explain it like you're five.",q:"Perfect — so why do exchange rates even move?"},
-  {cat:'work',title:"A mistake I made",ja:"やらかした話",opener:"I made a mistake at work once that still makes me cringe.",q:"We've all been there — what happened?"},
-  {cat:'work',title:"If I quit for music",ja:"仕事辞めて音楽やったら",opener:"Sometimes I imagine quitting the bank to do music full time. Let's go there.",q:"Big move — what would day one of that life look like?"},
+ {cat:'work',title:"Today's tough customer",ja:"今日の手ごわい客",opener:"Had a customer today that really tested my patience. Bank life, man.",oja:"今日まじで我慢を試される客がおってさ。銀行あるあるや。",q:"Oof — what did they want that made it so tough?",qja:"うわ、何を求めてきてそんな大変やったん？"},
+ {cat:'work',title:"My job, in English",ja:"銀行の仕事を英語で",opener:"Let me try to explain what I actually do at the bank, in English.",oja:"銀行で実際何やってるか、英語で説明してみるわ。",q:"Go for it — what's the part people don't get about your job?",qja:"どうぞ、みんなが分かってへん部分ってどこ？"},
+ {cat:'work',title:"A money tip I know",ja:"知ってるお金の豆知識",opener:"Working at a bank, I've picked up one money tip everyone should know.",oja:"銀行で働いてて、みんな知っとくべきお金の豆知識を1個覚えた。",q:"Alright, teach me — what's the tip?",qja:"教えてや、そのコツって？"},
+ {cat:'work',title:"Forex, made simple",ja:"外為をやさしく説明",opener:"I handle foreign exchange at work. Let me explain it like you're five.",oja:"仕事で外国為替やってる。5歳児に説明する感じでいくわ。",q:"Perfect — so why do exchange rates even move?",qja:"ええな、そもそもなんで為替レートって動くん？"},
+ {cat:'work',title:"A mistake I made",ja:"やらかした話",opener:"I made a mistake at work once that still makes me cringe.",oja:"昔仕事でやらかしてさ、今でも思い出すと恥ずい。",q:"We've all been there — what happened?",qja:"みんな通る道や、何があったん？"},
+ {cat:'work',title:"If I quit for music",ja:"仕事辞めて音楽やったら",opener:"Sometimes I imagine quitting the bank to do music full time. Let's go there.",oja:"たまに銀行辞めて音楽一本でやる想像するんよ。その話しよ。",q:"Big move — what would day one of that life look like?",qja:"でかい決断やな、その生活の1日目ってどんな感じ？"},
 
-  {cat:'wild',title:"If I got famous",ja:"もし有名になったら",opener:"Let's say my music blows up and I get famous. Here's how I'd handle it.",q:"Love it — what's the first thing you'd buy?"},
-  {cat:'wild',title:"One superpower",ja:"超能力を1つ選ぶなら",opener:"If I could pick one superpower, I've already made my decision.",q:"Which one — and why that over flying?"},
-  {cat:'wild',title:"Where I'd time travel",ja:"タイムトラベルの行き先",opener:"If I had a time machine, I know exactly which era I'm going to.",q:"Ooh — past or future, and where do you land?"},
-  {cat:'wild',title:"My perfect city",ja:"理想の街をつくるなら",opener:"Let me design my perfect city from scratch. My rules, my world.",q:"Sounds ideal — what's the one thing every street has?"},
-  {cat:'wild',title:"Zombie apocalypse plan",ja:"ゾンビが来たら",opener:"If zombies showed up tomorrow, I actually have a plan. Kind of.",q:"Alright, survivor — what's your first move?"},
-  {cat:'wild',title:"If I won the lottery",ja:"宝くじが当たったら",opener:"Say I win the lottery tomorrow. Here's the plan, step by step.",q:"Let's dream — what's the very first thing you do?"},
+ {cat:'wild',title:"If I got famous",ja:"もし有名になったら",opener:"Let's say my music blows up and I get famous. Here's how I'd handle it.",oja:"俺の音楽がバズって有名になったとする。こう対処するわ。",q:"Love it — what's the first thing you'd buy?",qja:"ええな、最初に何買う？"},
+ {cat:'wild',title:"One superpower",ja:"超能力を1つ選ぶなら",opener:"If I could pick one superpower, I've already made my decision.",oja:"超能力を1個選べるなら、もう決めてる。",q:"Which one — and why that over flying?",qja:"どれ？なんで空飛ぶよりそれなん？"},
+ {cat:'wild',title:"Where I'd time travel",ja:"タイムトラベルの行き先",opener:"If I had a time machine, I know exactly which era I'm going to.",oja:"タイムマシンがあったら、どの時代行くか決まってる。",q:"Ooh — past or future, and where do you land?",qja:"おお、過去か未来か、どこに着地する？"},
+ {cat:'wild',title:"My perfect city",ja:"理想の街をつくるなら",opener:"Let me design my perfect city from scratch. My rules, my world.",oja:"理想の街をゼロから設計させて。俺のルール、俺の世界。",q:"Sounds ideal — what's the one thing every street has?",qja:"理想的やな、どの通りにも必ずあるもんは？"},
+ {cat:'wild',title:"Zombie apocalypse plan",ja:"ゾンビが来たら",opener:"If zombies showed up tomorrow, I actually have a plan. Kind of.",oja:"明日ゾンビが出たら、一応計画はある。まあ一応な。",q:"Alright, survivor — what's your first move?",qja:"よし生存者、最初の行動は？"},
+ {cat:'wild',title:"If I won the lottery",ja:"宝くじが当たったら",opener:"Say I win the lottery tomorrow. Here's the plan, step by step.",oja:"明日宝くじ当たったとする。計画を順番に話すわ。",q:"Let's dream — what's the very first thing you do?",qja:"夢見よう、一番最初にやることは？"}
 ];
 
-/* ---------- storage (safe) ---------- */
-const mem={};
-const store={
-  get(k){try{return localStorage.getItem(k)}catch(e){return k in mem?mem[k]:null}},
-  set(k,v){try{localStorage.setItem(k,v)}catch(e){mem[k]=v}}
+var mem={};
+var store={
+  get:function(k){try{return localStorage.getItem(k)}catch(e){return (k in mem)?mem[k]:null}},
+  set:function(k,v){try{localStorage.setItem(k,v)}catch(e){mem[k]=v}}
 };
-function dstr(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
-const today=dstr(new Date());
-const yday=(()=>{const d=new Date();d.setDate(d.getDate()-1);return dstr(d)})();
+function pad(n){return String(n).padStart(2,'0')}
+function dstr(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())}
+function parse(s){var p=s.split('-');return new Date(+p[0],+p[1]-1,+p[2])}
+var today=dstr(new Date());
 
-let streak=+(store.get('tm_streak')||0);
-let best=+(store.get('tm_best')||0);
-let total=+(store.get('tm_total')||0);
-let last=store.get('tm_last')||'';
-let lastIdx=-1;
+/* day set (source of truth) */
+function loadDays(){
+  var raw=store.get('tm_days');
+  var arr=[];
+  if(raw){try{arr=JSON.parse(raw)||[]}catch(e){arr=[]}}
+  // migrate old single-day record if present
+  var last=store.get('tm_last');
+  if(last && arr.indexOf(last)<0) arr.push(last);
+  return arr;
+}
+var daySet=(function(){var s={};loadDays().forEach(function(d){s[d]=1});return s})();
+function saveDays(){store.set('tm_days',JSON.stringify(Object.keys(daySet)))}
+function hasDay(d){return !!daySet[d]}
+function addDay(d){if(!daySet[d]){daySet[d]=1;saveDays()}}
+function toggleDay(d){if(daySet[d]){delete daySet[d]}else{daySet[d]=1}saveDays()}
+
+function computeStreak(){
+  var cur=new Date();
+  if(!hasDay(today)) cur.setDate(cur.getDate()-1);
+  var s=0;
+  while(hasDay(dstr(cur))){s++;cur.setDate(cur.getDate()-1)}
+  return s;
+}
+function computeBest(){
+  var keys=Object.keys(daySet).sort();
+  var best=0,run=0,prev=null;
+  keys.forEach(function(k){
+    if(prev){
+      var pd=parse(prev),cd=parse(k);
+      var diff=Math.round((cd-pd)/86400000);
+      run=(diff===1)?run+1:1;
+    }else run=1;
+    if(run>best)best=run;
+    prev=k;
+  });
+  return best;
+}
+
+function $(id){return document.getElementById(id)}
 
 function renderFire(){
-  const done=last===today;
-  document.getElementById('streakNum').textContent=streak;
-  document.getElementById('streakNum').classList.toggle('cold',streak===0);
-  document.getElementById('flame').classList.toggle('cold',streak===0);
-  document.getElementById('totalDays').textContent=total;
-  document.getElementById('bestStreak').textContent=best;
-  const b=document.getElementById('todayBadge');
-  if(done){b.className='today done';b.textContent='今夜は✓済み'}
+  var streak=computeStreak();
+  var done=hasDay(today);
+  $('streakNum').textContent=streak;
+  $('streakNum').classList.toggle('cold',streak===0);
+  $('flame').classList.toggle('cold',streak===0);
+  $('totalDays').textContent=Object.keys(daySet).length;
+  $('bestStreak').textContent=computeBest();
+  var b=$('todayBadge');
+  if(done){b.className='today done';b.textContent='今夜は\u2713済み'}
   else{b.className='today todo';b.textContent='今夜はまだ'}
 }
-function markToday(){
-  if(last===today)return;            // 1日1点灯（正直な記録）
-  streak = (last===yday)?streak+1:1;
-  best=Math.max(best,streak);
-  total+=1; last=today;
-  store.set('tm_streak',streak);store.set('tm_best',best);
-  store.set('tm_total',total);store.set('tm_last',last);
-}
 
-/* ---------- gacha ---------- */
-const card=document.getElementById('card');
-function roll(){
-  let i;do{i=Math.floor(Math.random()*THEMES.length)}while(i===lastIdx&&THEMES.length>1);
-  lastIdx=i;const t=THEMES[i];const c=CATS[t.cat];
-  const tag=document.getElementById('tag');
-  tag.style.color=c.color;tag.textContent='';
-  tag.append(c.emoji+' '+c.label);
-  document.getElementById('title').textContent=t.title;
-  document.getElementById('ja').textContent=t.ja;
-  document.getElementById('opener').textContent='“'+t.opener+'”';
-  document.getElementById('q').textContent='“'+t.q+'”';
-  document.getElementById('opener').dataset.raw=t.opener;
-  resetCopy();
-  card.hidden=false;
-  requestAnimationFrame(()=>card.classList.add('show'));
-  markToday();renderFire();
-  document.getElementById('gachaLabel').textContent='PULL AGAIN';
+/* calendar */
+var viewD=new Date(); viewD.setDate(1);
+var DOW=['月','火','水','木','金','土','日'];
+function buildDow(){
+  var r=$('dowRow');r.innerHTML='';
+  DOW.forEach(function(d,i){
+    var c=document.createElement('div');
+    c.className='cal-dow'+(i===5?' sat':i===6?' sun':'');
+    c.textContent=d;r.appendChild(c);
+  });
 }
-const g=document.getElementById('gacha');
-g.addEventListener('click',()=>{
+function renderCal(){
+  $('mlabel').textContent=viewD.getFullYear()+'年'+(viewD.getMonth()+1)+'月';
+  var grid=$('calGrid');grid.innerHTML='';
+  var y=viewD.getFullYear(),m=viewD.getMonth();
+  var first=new Date(y,m,1);
+  var offset=(first.getDay()+6)%7; // Mon=0
+  var dim=new Date(y,m+1,0).getDate();
+  for(var i=0;i<offset;i++){
+    var e=document.createElement('div');e.className='cal-cell empty';grid.appendChild(e);
+  }
+  for(var d=1;d<=dim;d++){
+    var ds=y+'-'+pad(m+1)+'-'+pad(d);
+    var dowIdx=(new Date(y,m,d).getDay()+6)%7;
+    var cell=document.createElement('div');
+    cell.className='cal-cell'+(dowIdx===5?' sat':dowIdx===6?' sun':'');
+    cell.textContent=d;
+    if(hasDay(ds))cell.classList.add('done');
+    if(ds===today)cell.classList.add('today');
+    if(ds>today)cell.classList.add('future');
+    else{
+      (function(dstrLocal){
+        cell.addEventListener('click',function(){
+          toggleDay(dstrLocal);renderCal();renderFire();
+          toast(hasDay(dstrLocal)?'記録した \u2713':'取り消した');
+        });
+      })(ds);
+    }
+    grid.appendChild(cell);
+  }
+}
+$('prevM').addEventListener('click',function(){viewD.setMonth(viewD.getMonth()-1);renderCal()});
+$('nextM').addEventListener('click',function(){viewD.setMonth(viewD.getMonth()+1);renderCal()});
+
+function resetJa(){
+  $('openerJa').classList.remove('show');$('openerJaBtn').innerHTML='\uD83C\uDDEF\uD83C\uDDF5 日本語を見る';
+  $('qJa').classList.remove('show');$('qJaBtn').innerHTML='\uD83C\uDDEF\uD83C\uDDF5 日本語を見る';
+}
+function resetCopy(){$('copy').classList.remove('ok');$('copyLabel').innerHTML='\uD83D\uDCCB コピーして口火にする'}
+
+var lastIdx=-1;var card=$('card');
+function roll(){
+  var i;do{i=Math.floor(Math.random()*THEMES.length)}while(i===lastIdx&&THEMES.length>1);
+  lastIdx=i;var t=THEMES[i];var c=CATS[t.cat];
+  var tag=$('tag');tag.style.color=c.color;tag.textContent=c.emoji+' '+c.label;
+  $('title').textContent=t.title;
+  $('jaTitle').textContent=t.ja;
+  $('opener').textContent='\u201C'+t.opener+'\u201D';
+  $('opener').dataset.raw=t.opener;
+  $('openerJa').textContent=t.oja;
+  $('q').textContent='\u201C'+t.q+'\u201D';
+  $('qJa').textContent=t.qja;
+  resetCopy();resetJa();
+  card.hidden=false;
+  requestAnimationFrame(function(){card.classList.add('show')});
+  addDay(today);renderFire();renderCal();
+  $('gachaLabel').textContent='PULL AGAIN';
+}
+var g=$('gacha');
+g.addEventListener('click',function(){
   g.classList.remove('rolling');void g.offsetWidth;g.classList.add('rolling');
   card.classList.remove('show');
   setTimeout(roll,120);
 });
 
-/* ---------- copy ---------- */
-function resetCopy(){const b=document.getElementById('copy');b.classList.remove('ok');document.getElementById('copyLabel').textContent='📋 コピーして口火にする'}
-function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),1600)}
-async function copyText(txt){
-  try{await navigator.clipboard.writeText(txt);return true}
-  catch(e){try{const ta=document.createElement('textarea');ta.value=txt;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();return true}catch(_){return false}}
+function toast(msg){var t=$('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(function(){t.classList.remove('show')},1800)}
+function copyText(txt){
+  return navigator.clipboard.writeText(txt).then(function(){return true}).catch(function(){
+    try{var ta=document.createElement('textarea');ta.value=txt;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();return true}catch(e){return false}
+  });
 }
-document.getElementById('copy').addEventListener('click',async()=>{
-  const raw=document.getElementById('opener').dataset.raw||'';
-  const ok=await copyText(raw);
-  if(ok){const b=document.getElementById('copy');b.classList.add('ok');document.getElementById('copyLabel').textContent='✓ コピーした';toast('Copied ✓')}
-  else toast('コピー失敗…手動でどうぞ');
+$('copy').addEventListener('click',function(){
+  var raw=$('opener').dataset.raw||'';
+  copyText(raw).then(function(ok){
+    if(ok){$('copy').classList.add('ok');$('copyLabel').innerHTML='\u2713 コピーした';toast('Copied \u2713')}
+    else toast('コピー失敗…手動でどうぞ');
+  });
+});
+function toggleJa(btnId,elId){
+  var el=$(elId),btn=$(btnId);
+  var show=el.classList.toggle('show');
+  btn.innerHTML=show?'\uD83C\uDDEF\uD83C\uDDF5 訳を隠す':'\uD83C\uDDEF\uD83C\uDDF5 日本語を見る';
+}
+$('openerJaBtn').addEventListener('click',function(){toggleJa('openerJaBtn','openerJa')});
+$('qJaBtn').addEventListener('click',function(){toggleJa('qJaBtn','qJa')});
+$('voice').addEventListener('click',function(){
+  var raw=$('opener').dataset.raw||'';
+  copyText(raw).then(function(){
+    toast('口火をコピー \u2713 · Claudeで貼って話そう');
+    setTimeout(function(){location.href='https://claude.ai/new'},500);
+  });
 });
 
-/* ---------- voice ---------- */
-document.getElementById('voice').addEventListener('click',async()=>{
-  const raw=document.getElementById('opener').dataset.raw||'';
-  await copyText(raw);
-  toast('口火をコピー · Claudeで音声モードON');
-});
-
-renderFire();
+buildDow();renderCal();renderFire();
 </script>
 </body>
 </html>
