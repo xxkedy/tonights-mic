@@ -154,16 +154,16 @@
     </div>
     <div class="sep"></div>
     <div class="block">
-      <div class="lbl">&#128172; CLAUDE WILL ASK — こう返ってくる</div>
+      <div class="lbl">&#128172; GPT WILL ASK — こう返ってくる</div>
       <div class="quote cyan" id="q"></div>
       <button class="ja-toggle" id="qJaBtn">&#127471;&#127477; 日本語を見る</button>
       <div class="ja-text cyan" id="qJa"></div>
     </div>
-    <button class="voice" id="voice">&#128483;&#65039; コピーして Claude を開く →</button>
-    <p class="voice-note">押すと口火をコピー＆Claudeアプリが開く<br>Claudeで音声モードをON → 貼り付けて話そう</p>
+    <button class="voice" id="voice">&#128483;&#65039; ChatGPT に投げる →</button>
+    <p class="voice-note">押すとお題入りでChatGPTが開く（保険でコピーも済み）<br>送信 → 音声アイコンでそのまま会話へ／空で開いたら貼るだけ</p>
   </div>
 
-  <div class="foot">Ask Claude to fix your English after · 記録は端末に保存</div>
+  <div class="foot">Ask GPT to fix your English after · 記録は端末に保存</div>
   <div class="toast" id="toast">Copied</div>
 
 <script>
@@ -335,6 +335,7 @@ function roll(){
   $('opener').dataset.raw=t.opener;
   $('openerJa').textContent=t.oja;
   $('q').textContent='\u201C'+t.q+'\u201D';
+  $('q').dataset.raw=t.q;
   $('qJa').textContent=t.qja;
   resetCopy();resetJa();
   card.hidden=false;
@@ -370,10 +371,12 @@ function toggleJa(btnId,elId){
 $('openerJaBtn').addEventListener('click',function(){toggleJa('openerJaBtn','openerJa')});
 $('qJaBtn').addEventListener('click',function(){toggleJa('qJaBtn','qJa')});
 $('voice').addEventListener('click',function(){
-  var raw=$('opener').dataset.raw||'';
-  copyText(raw).then(function(){
-    toast('口火をコピー \u2713 · Claudeで貼って話そう');
-    setTimeout(function(){location.href='https://claude.ai/new'},500);
+  var op=$('opener').dataset.raw||'';
+  var qq=$('q').dataset.raw||'';
+  var prompt="Let's chat in English for about 5 minutes. Be my casual conversation partner: keep replies short and natural, keep asking me questions, and gently correct my English mistakes as we go. Here's my opener: \""+op+"\" React to it, then ask me: \""+qq+"\"";
+  copyText(prompt).then(function(){
+    toast('ChatGPTへ \u2713 · 空で開いたら貼るだけ');
+    setTimeout(function(){location.href='https://chatgpt.com/?q='+encodeURIComponent(prompt)},500);
   });
 });
 
