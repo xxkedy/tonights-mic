@@ -373,7 +373,7 @@ $('qJaBtn').addEventListener('click',function(){toggleJa('qJaBtn','qJa')});
 $('voice').addEventListener('click',function(){
   var op=$('opener').dataset.raw||'';
   var qq=$('q').dataset.raw||'';
-  var prompt="Let's chat in English for about 5 minutes. Be my casual conversation partner: keep replies short and natural, keep asking me questions, and gently correct my English mistakes as we go. Here's my opener: \""+op+"\" React to it, then ask me: \""+qq+"\"";
+  var prompt="Let's have a casual English conversation for about 5 minutes — I'm practicing speaking. After your first reply I'll switch to voice mode, so keep every reply short and spoken-style. Keep asking me questions and gently correct my mistakes as we go. Here's my opener: \""+op+"\" React to it, then ask me: \""+qq+"\"";
   copyText(prompt).then(function(){
     toast('ChatGPTへ \u2713 · 空で開いたら貼るだけ');
     setTimeout(function(){location.href='https://chatgpt.com/?q='+encodeURIComponent(prompt)},500);
