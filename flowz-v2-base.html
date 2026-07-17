@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#0b0b0e" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Flowz" />
+<link rel="apple-touch-icon" href="icon-180.png" />
+<link rel="icon" type="image/png" sizes="512x512" href="icon-512.png" />
+<title>Flowz</title>
+<style>
+  :root{
+    --bg:#0b0b0e; --bg2:#15151b; --bg3:#1d1d25;
+    --line:#2a2a34;
+    --amber:#ff9e2c; --amber-soft:#ffc06b;
+    --cyan:#22d3ee; --cyan-soft:#7fe6f5; --orange:#ff6b35; --green:#4ade80; --pink:#ff5c8a;
+    --text:#f5f3ee; --muted:#9a9aa6;
+    --glow-amber:0 0 24px rgba(255,158,44,.45);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    background:
+      radial-gradient(120% 60% at 50% -10%, rgba(255,158,44,.10), transparent 60%),
+      radial-gradient(90% 50% at 90% 110%, rgba(34,211,238,.08), transparent 60%),
+      var(--bg);
+    color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Segoe UI",Roboto,sans-serif;
+    min-height:100dvh;
+    padding:max(18px,env(safe-area-inset-top)) 16px calc(28px + env(safe-area-inset-bottom));
+    max-width:520px;margin:0 auto;
+  }
+  .brand{text-align:center;margin:6px 0 14px}
+  .brand h1{margin:0;font-size:clamp(28px,8.5vw,40px);font-weight:900;letter-spacing:2px;color:var(--amber);text-shadow:var(--glow-amber);line-height:1}
+  .brand h1 .m{color:var(--cyan);text-shadow:0 0 24px rgba(34,211,238,.45)}
+  .brand p{margin:6px 0 0;color:var(--muted);font-size:12px;letter-spacing:3px;font-weight:700}
+  .fire{background:linear-gradient(180deg,var(--bg2),var(--bg));border:1px solid var(--line);border-radius:18px;padding:14px 16px;margin-bottom:14px;display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:center}
+  .fire .big{display:flex;align-items:baseline;gap:6px}
+  .fire .flame{font-size:30px;filter:drop-shadow(0 0 10px rgba(255,107,53,.6))}
+  .fire .num{font-size:clamp(40px,13vw,56px);font-weight:900;line-height:.9;color:var(--amber);text-shadow:var(--glow-amber)}
+  .fire .num.cold{color:var(--muted);text-shadow:none}
+  .fire .flame.cold{filter:grayscale(1) opacity(.5)}
+  .fire .meta .unit{font-size:12px;color:var(--muted);font-weight:700;margin-top:2px}
+  .fire .side{text-align:right;font-size:12px;color:var(--muted);line-height:1.7}
+  .fire .side b{color:var(--text);font-weight:800}
+  .fire .today{display:inline-flex;align-items:center;gap:5px;padding:4px 9px;border-radius:999px;font-weight:800;font-size:12px}
+  .fire .today.done{background:rgba(74,222,128,.14);color:var(--green)}
+  .fire .today.todo{background:rgba(255,158,44,.14);color:var(--amber-soft)}
+  /* today's phrase */
+  .pstrip{background:var(--bg2);border:1px solid var(--line);border-left:3px solid var(--amber);border-radius:14px;padding:11px 14px;margin-bottom:14px}
+  .pstrip .pk{display:block;font-size:10px;letter-spacing:1.5px;color:var(--amber-soft);font-weight:900;margin-bottom:3px}
+  .pstrip b{display:block;font-size:15px;line-height:1.45}
+  .pstrip .pja{display:block;font-size:12px;color:var(--muted);margin-top:2px}
+  /* mode buttons */
+  .modes{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:8px}
+  .cbtn{border:none;cursor:pointer;font-weight:900;font-size:17px;letter-spacing:.5px;padding:17px 8px;border-radius:16px;display:flex;align-items:center;justify-content:center;gap:7px;transition:transform .08s}
+  .cbtn:active{transform:translateY(2px) scale(.98)}
+  .cbtn small{font-size:10px;font-weight:800;opacity:.7}
+  .cbtn.go{background:linear-gradient(180deg,var(--cyan),#0bb6d4);color:#00252b;box-shadow:0 8px 22px rgba(34,211,238,.25)}
+  .cbtn.home{background:linear-gradient(180deg,var(--orange),#e04f1e);color:#2b0f00;box-shadow:0 8px 22px rgba(255,107,53,.25)}
+  .cbtn.bath{background:linear-gradient(180deg,var(--green),#22b358);color:#03210f;box-shadow:0 8px 22px rgba(74,222,128,.22)}
+  .cbtn.free{background:linear-gradient(180deg,var(--amber),#e97e11);color:#231400;box-shadow:0 8px 22px rgba(255,158,44,.25)}
+  .c-note{text-align:center;color:var(--muted);font-size:11px;margin:0 0 14px;line-height:1.5}
+  .ccard{background:var(--bg2);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-bottom:14px;font-size:13px;line-height:1.6}
+  .ccard b{display:block;color:var(--green);font-size:12px;letter-spacing:.5px;margin-bottom:2px}
+  /* calendar */
+  .cal{background:var(--bg2);border:1px solid var(--line);border-radius:18px;padding:14px 14px 16px;margin-bottom:4px}
+  .cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+  .cal-head .mlabel{font-size:15px;font-weight:900;letter-spacing:.5px}
+  .cal-nav{background:var(--bg3);border:1px solid var(--line);color:var(--text);width:34px;height:34px;border-radius:10px;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+  .cal-nav:active{background:#26262f}
+  .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+  .cal-dow{text-align:center;font-size:11px;font-weight:800;color:var(--muted);padding:2px 0}
+  .cal-dow.sat{color:var(--cyan-soft)} .cal-dow.sun{color:var(--pink)}
+  .cal-cell{aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:10px;font-size:13px;font-weight:700;color:var(--text);background:var(--bg3);cursor:pointer;position:relative;transition:transform .06s}
+  .cal-cell:active{transform:scale(.92)}
+  .cal-cell.empty{background:none;cursor:default}
+  .cal-cell.sat{color:var(--cyan-soft)} .cal-cell.sun{color:var(--pink)}
+  .cal-cell.done{background:var(--amber);color:#231400;font-weight:900}
+  .cal-cell.done.sat,.cal-cell.done.sun{color:#231400}
+  .cal-cell.today{box-shadow:0 0 0 2px var(--cyan)}
+  .cal-cell.future{opacity:.32;cursor:default}
+  .cal-legend{display:flex;gap:14px;justify-content:center;margin-top:12px;font-size:11px;color:var(--muted)}
+  .cal-legend span{display:inline-flex;align-items:center;gap:5px}
+  .cal-legend .dot{width:11px;height:11px;border-radius:3px;display:inline-block}
+  .cal-legend .dot.done{background:var(--amber)} .cal-legend .dot.ring{box-shadow:inset 0 0 0 2px var(--cyan)}
+  .cal-tip{text-align:center;font-size:11px;color:#5a5a66;margin-top:8px}
+  /* backup */
+  .io{display:flex;gap:8px;justify-content:center;margin-top:12px}
+  .iobtn{background:none;border:1px solid var(--line);color:var(--muted);font-size:11px;font-weight:700;padding:7px 12px;border-radius:999px;cursor:pointer}
+  .iobtn:active{background:var(--bg3)}
+  .toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(20px);background:#111;border:1px solid var(--green);color:var(--green);padding:11px 18px;border-radius:999px;font-weight:800;font-size:14px;opacity:0;pointer-events:none;transition:.25s;z-index:50;max-width:90%;text-align:center}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .foot{text-align:center;color:#5a5a66;font-size:11px;margin-top:20px;letter-spacing:.5px;line-height:1.8}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+  :focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+</style>
+</head>
+<body>
+  <div class="brand">
+    <h1>Flow<span class="m">z</span></h1>
+    <p>質問に答えるだけ · 1 DAY 3 ROUNDS</p>
+  </div>
+
+  <div class="fire" id="fire">
+    <div class="big">
+      <span class="flame" id="flame">&#128293;</span>
+      <span class="num" id="streakNum">0</span>
+      <div class="meta"><div class="unit">日連続</div></div>
+    </div>
+    <div class="side">
+      <span class="today todo" id="todayBadge">今日はまだ</span><br>
+      通算 <b id="totalDays">0</b> 日 · 最長 <b id="bestStreak">0</b> 日
+    </div>
+  </div>
+
+  <div class="pstrip">
+    <span class="pk">&#128273; 今日のフレーズ — どこかで2回使う</span>
+    <b id="pEn"></b>
+    <span class="pja" id="pJa"></span>
+  </div>
+
+  <div class="modes">
+    <button class="cbtn go" id="goBtn">&#128692; 行き <small>15min</small></button>
+    <button class="cbtn home" id="homeBtn">&#127750; 帰り <small>15min</small></button>
+    <button class="cbtn bath" id="bathBtn">&#128704; 風呂 <small>連射5min</small></button>
+    <button class="cbtn free" id="freeBtn">&#127922; フリー <small>お題10min</small></button>
+  </div>
+  <p class="c-note">タップ → 送信 → 音声モードへ／終わる時は "Wrap up!" って言うとまとめが出る</p>
+
+  <div class="ccard" id="ccard" hidden>
+    <b id="ccTag"></b><span id="ccBody"></span>
+  </div>
+
+  <div class="cal">
+    <div class="cal-head">
+      <button class="cal-nav" id="prevM" aria-label="前の月">&#8249;</button>
+      <div class="mlabel" id="mlabel"></div>
+      <button class="cal-nav" id="nextM" aria-label="次の月">&#8250;</button>
+    </div>
+    <div class="cal-grid" id="dowRow"></div>
+    <div class="cal-grid" id="calGrid" style="margin-top:5px"></div>
+    <div class="cal-legend">
+      <span><i class="dot done"></i>やった日</span>
+      <span><i class="dot ring"></i>今日</span>
+    </div>
+    <div class="cal-tip">過去の日をタップで後から記録／取り消しOK</div>
+  </div>
+
+  <div class="io">
+    <button class="iobtn" id="expBtn">&#128228; 記録コピー</button>
+    <button class="iobtn" id="impBtn">&#128229; 復元</button>
+  </div>
+
+  <div class="foot">Say "Wrap up!" to finish · 記録は端末に保存<br>Flowz v2（旧 MIC CHECK）· 2026.07.15</div>
+  <div class="toast" id="toast">Copied</div>
+
+<script>
+/* ---------- storage ---------- */
+var mem={};
+var store={
+  get:function(k){try{return localStorage.getItem(k)}catch(e){return (k in mem)?mem[k]:null}},
+  set:function(k,v){try{localStorage.setItem(k,v)}catch(e){mem[k]=v}}
+};
+function pad(n){return String(n).padStart(2,'0')}
+function dstr(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())}
+function parse(s){var p=s.split('-');return new Date(+p[0],+p[1]-1,+p[2])}
+var today=dstr(new Date());
+
+function loadDays(){
+  var raw=store.get('tm_days');
+  var arr=[];
+  if(raw){try{arr=JSON.parse(raw)||[]}catch(e){arr=[]}}
+  var last=store.get('tm_last');
+  if(last && arr.indexOf(last)<0) arr.push(last);
+  return arr;
+}
+var daySet=(function(){var s={};loadDays().forEach(function(d){s[d]=1});return s})();
+function saveDays(){store.set('tm_days',JSON.stringify(Object.keys(daySet)))}
+function hasDay(d){return !!daySet[d]}
+function addDay(d){if(!daySet[d]){daySet[d]=1;saveDays()}}
+function toggleDay(d){if(daySet[d]){delete daySet[d]}else{daySet[d]=1}saveDays()}
+
+function computeStreak(){
+  var cur=new Date();
+  if(!hasDay(today)) cur.setDate(cur.getDate()-1);
+  var s=0;
+  while(hasDay(dstr(cur))){s++;cur.setDate(cur.getDate()-1)}
+  return s;
+}
+function computeBest(){
+  var keys=Object.keys(daySet).sort();
+  var best=0,run=0,prev=null;
+  keys.forEach(function(k){
+    if(prev){
+      var pd=parse(prev),cd=parse(k);
+      var diff=Math.round((cd-pd)/86400000);
+      run=(diff===1)?run+1:1;
+    }else run=1;
+    if(run>best)best=run;
+    prev=k;
+  });
+  return best;
+}
+
+function $(id){return document.getElementById(id)}
+
+function renderFire(){
+  var streak=computeStreak();
+  var done=hasDay(today);
+  $('streakNum').textContent=streak;
+  $('streakNum').classList.toggle('cold',streak===0);
+  $('flame').classList.toggle('cold',streak===0);
+  $('totalDays').textContent=Object.keys(daySet).length;
+  $('bestStreak').textContent=computeBest();
+  var b=$('todayBadge');
+  if(done){b.className='today done';b.textContent='今日 \u2713済み'}
+  else{b.className='today todo';b.textContent='今日はまだ'}
+}
+
+/* ---------- calendar ---------- */
+var viewD=new Date(); viewD.setDate(1);
+var DOW=['月','火','水','木','金','土','日'];
+function buildDow(){
+  var r=$('dowRow');r.innerHTML='';
+  DOW.forEach(function(d,i){
+    var c=document.createElement('div');
+    c.className='cal-dow'+(i===5?' sat':i===6?' sun':'');
+    c.textContent=d;r.appendChild(c);
+  });
+}
+function renderCal(){
+  $('mlabel').textContent=viewD.getFullYear()+'年'+(viewD.getMonth()+1)+'月';
+  var grid=$('calGrid');grid.innerHTML='';
+  var y=viewD.getFullYear(),m=viewD.getMonth();
+  var first=new Date(y,m,1);
+  var offset=(first.getDay()+6)%7;
+  var dim=new Date(y,m+1,0).getDate();
+  for(var i=0;i<offset;i++){
+    var e=document.createElement('div');e.className='cal-cell empty';grid.appendChild(e);
+  }
+  for(var d=1;d<=dim;d++){
+    var ds=y+'-'+pad(m+1)+'-'+pad(d);
+    var dowIdx=(new Date(y,m,d).getDay()+6)%7;
+    var cell=document.createElement('div');
+    cell.className='cal-cell'+(dowIdx===5?' sat':dowIdx===6?' sun':'');
+    cell.textContent=d;
+    if(hasDay(ds))cell.classList.add('done');
+    if(ds===today)cell.classList.add('today');
+    if(ds>today)cell.classList.add('future');
+    else{
+      (function(dstrLocal){
+        cell.addEventListener('click',function(){
+          toggleDay(dstrLocal);renderCal();renderFire();
+          toast(hasDay(dstrLocal)?'記録した \u2713':'取り消した');
+        });
+      })(ds);
+    }
+    grid.appendChild(cell);
+  }
+}
+$('prevM').addEventListener('click',function(){viewD.setMonth(viewD.getMonth()-1);renderCal()});
+$('nextM').addEventListener('click',function(){viewD.setMonth(viewD.getMonth()+1);renderCal()});
+
+/* ---------- toast & copy ---------- */
+function toast(msg){var t=$('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(function(){t.classList.remove('show')},1800)}
+function copyText(txt){
+  return navigator.clipboard.writeText(txt).then(function(){return true}).catch(function(){
+    try{var ta=document.createElement('textarea');ta.value=txt;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();return true}catch(e){return false}
+  });
+}
+
+/* ---------- today's phrase ---------- */
+var PHRASES=[
+ {en:"How do you say ___ in English?",ja:"「___」って英語で何て言う？"},
+ {en:"What does ___ mean?",ja:"___ってどういう意味？"},
+ {en:"Can you say that again, slowly?",ja:"もう1回ゆっくり言って"},
+ {en:"What do you call this?",ja:"これ何て言うん？"},
+ {en:"Let me think.",ja:"ちょっと考えさせて"},
+ {en:"I'm not sure, but I think ___",ja:"自信ないけど、たぶん〜"},
+ {en:"Does that make sense?",ja:"伝わっとる？"},
+ {en:"It takes about ___ minutes.",ja:"だいたい〜分かかる"},
+ {en:"I'm planning to ___",ja:"〜するつもり"},
+ {en:"I'm thinking about ___ing",ja:"〜しようか考え中"},
+ {en:"I ended up ___ing",ja:"結局〜した"},
+ {en:"It depends.",ja:"場合による"},
+ {en:"Actually, ___",ja:"実は〜"},
+ {en:"I used to ___",ja:"昔は〜してた"},
+ {en:"I'm into ___ these days.",ja:"最近〜にハマっとる"},
+ {en:"That reminds me of ___",ja:"それで思い出したんやけど〜"},
+ {en:"The thing is, ___",ja:"要はな、〜"},
+ {en:"I feel like ___ing",ja:"〜したい気分"},
+ {en:"It sounds like ___",ja:"〜っぽいね"},
+ {en:"I'd rather ___",ja:"どっちかというと〜したい"},
+ {en:"I'm looking forward to ___",ja:"〜が楽しみ"},
+ {en:"To be honest, ___",ja:"正直〜"},
+ {en:"I have to ___",ja:"〜せなあかん"},
+ {en:"I'm about to ___",ja:"ちょうど〜するとこ"},
+ {en:"I just ___ed",ja:"〜したばっかり"},
+ {en:"It was worth it.",ja:"やる価値あった"},
+ {en:"I couldn't ___",ja:"〜できんかった"},
+ {en:"As I said, ___",ja:"さっき言うたように〜"},
+ {en:"In my case, ___",ja:"俺の場合は〜"},
+ {en:"First, ___. Then, ___",ja:"まず〜、それから〜"},
+ {en:"Compared to ___",ja:"〜と比べると"},
+ {en:"I'm getting better at ___",ja:"〜が上達してきた"},
+ {en:"It's been a while since ___",ja:"〜ぶりや"},
+ {en:"I almost forgot.",ja:"忘れるとこやった"},
+ {en:"Long story short, ___",ja:"手短に言うと〜"},
+ {en:"I'm used to ___ing",ja:"〜には慣れとる"},
+ {en:"It's not a big deal.",ja:"大したことない"},
+ {en:"I'll figure it out.",ja:"なんとかするわ"},
+ {en:"Guess what?",ja:"聞いてや"},
+ {en:"Anyway, ___",ja:"とにかく〜"}
+];
+function phraseOfDay(){
+  var localDays=Math.floor((Date.now()-new Date().getTimezoneOffset()*60000)/86400000);
+  return PHRASES[localDays%PHRASES.length];
+}
+
+/* ---------- topics (interview style / always answerable) ---------- */
+var TOPICS=[
+ {title:"Your music",ja:"自分の音楽",q:"What kind of music do you make?"},
+ {title:"Favorite artist",ja:"好きなアーティスト",q:"Who do you listen to the most these days?"},
+ {title:"Dream collab",ja:"夢のコラボ",q:"If you could make a song with anyone, who would it be?"},
+ {title:"Studio gear",ja:"制作機材",q:"What do you use to make your beats?"},
+ {title:"JP vs EN lyrics",ja:"日英の歌詞",q:"Which is harder to write, Japanese or English lyrics?"},
+ {title:"Live or studio",ja:"ライブ派？制作派？",q:"Would you rather perform live or stay in the studio?"},
+ {title:"Food you love",ja:"好きな食いもん",q:"What food could you eat every single day?"},
+ {title:"Morning routine",ja:"朝のルーティン",q:"What's the first thing you do in the morning?"},
+ {title:"Perfect day off",ja:"理想の休日",q:"What would your perfect day off look like?"},
+ {title:"Your town",ja:"住んどる街",q:"What do you like about the place you live?"},
+ {title:"Favorite season",ja:"好きな季節",q:"Which season do you like best, and why?"},
+ {title:"Travel",ja:"行きたい場所",q:"If you could fly anywhere next month, where would you go?"},
+ {title:"Training split",ja:"トレの分け方",q:"How do you split your training days?"},
+ {title:"Favorite exercise",ja:"好きな種目",q:"What's your favorite exercise, and why?"},
+ {title:"Why you train",ja:"鍛える理由",q:"Why did you start working out?"},
+ {title:"Cheat meal",ja:"チートミール",q:"What's your dream cheat meal?"},
+ {title:"Home gym",ja:"ホームジム",q:"What's in your home gym?"},
+ {title:"Your job, simply",ja:"仕事をやさしく説明",q:"What do you do at the bank? Explain it simply."},
+ {title:"Money tip",ja:"お金のコツ",q:"What's one money tip everyone should know?"},
+ {title:"Exchange rates",ja:"為替のしくみ",q:"Why do exchange rates go up and down?"},
+ {title:"Work and music",ja:"仕事と音楽",q:"How do you balance your job and your music?"},
+ {title:"If money didn't matter",ja:"金が要らんなら",q:"If money didn't matter, how would you spend your days?"},
+ {title:"Lottery",ja:"宝くじ",q:"If you won the lottery, what's the first thing you'd buy?"},
+ {title:"One superpower",ja:"超能力",q:"If you could have one superpower, which one would you pick?"},
+ {title:"Time travel",ja:"タイムトラベル",q:"If you had a time machine, where would you go?"},
+ {title:"If you got famous",ja:"有名になったら",q:"If your music blew up, what would change in your life?"},
+ {title:"Live anywhere",ja:"どこでも住めるなら",q:"If you could live in any country, where would you live?"},
+ {title:"Dinner with anyone",ja:"誰とメシ行く？",q:"If you could have dinner with anyone, dead or alive, who?"}
+];
+var lastIdx=-1;
+function pickTopic(){
+  var i;do{i=Math.floor(Math.random()*TOPICS.length)}while(i===lastIdx&&TOPICS.length>1);
+  lastIdx=i;return TOPICS[i];
+}
+
+/* ---------- prompt builder ---------- */
+function corePrompt(ph){
+  return "You are my English conversation partner. I'm a Japanese beginner — I understand simple English but I'm still slow at building sentences. Rules: 1) Interview me: ask one short, easy question at a time, and always end your turn with exactly one question. 2) Keep each reply to two short sentences plus your question, common everyday words only. 3) Never make me repeat sentences after you — no drills, no long grammar lessons. 4) If I make a mistake, say the corrected sentence in one short line, then move on. 5) If you don't get what I said, guess and check with 'You mean ...?'. 6) Naturally get me to use this phrase at least twice: \""+ph.en+"\". 7) When I say 'Wrap up', finish with: my top 3 mistakes fixed, one better version of something I said, and today's phrase one more time. After your first reply I'll switch to voice mode, so keep everything short and spoken-style. ";
+}
+var MODES={
+ go:{
+   name:'\uD83D\uDEB4 行き', dur:'about 15 minutes',
+   extra:"I'm on my bike riding to work, hands-free. If I go quiet for a bit, I'm riding — just wait for me. ",
+   lead:function(t){return "First, ask me about my plan for today. When that runs dry, switch to this topic — ask me: \""+t.q+"\""},
+   body:function(t){return '前半：今日の予定 → 後半：'+t.ja},
+   toast:'\uD83D\uDEB4 いってらっしゃい', topic:true
+ },
+ home:{
+   name:'\uD83C\uDF06 帰り', dur:'about 15 minutes',
+   extra:"I'm on my bike riding home, hands-free. If I go quiet for a bit, I'm riding — just wait for me. ",
+   lead:function(t){return "First, ask me how my day went. When that runs dry, switch to this topic — ask me: \""+t.q+"\""},
+   body:function(t){return '前半：今日の振り返り → 後半：'+t.ja},
+   toast:'\uD83C\uDF06 おつかれ、気をつけて', topic:true
+ },
+ bath:{
+   name:'\uD83D\uDEC0 風呂', dur:'about 5 minutes',
+   extra:"",
+   lead:function(){return "Rapid mode: skip rule 4 for now. Fire very easy questions about my everyday life at me, one at a time — I answer fast, speed over accuracy. After 10 questions, pause and give me my top 3 fixes, then keep going if I'm still here."},
+   body:function(){return '超簡単な質問を連射 → 文法無視で即答（瞬発力トレ）'},
+   toast:'\uD83D\uDEC0 連射いくで', topic:false
+ },
+ free:{
+   name:'\uD83C\uDFB2 フリー', dur:'about 10 minutes',
+   extra:"",
+   lead:function(t){return "Interview me about this topic — start by asking: \""+t.q+"\""},
+   body:function(t){return 'お題：'+t.ja},
+   toast:'\uD83C\uDFB2 引いたで', topic:true
+ }
+};
+function launch(mode){
+  var M=MODES[mode];
+  var t=M.topic?pickTopic():null;
+  var ph=phraseOfDay();
+  var p="Let's talk in English for "+M.dur+". "+M.extra+corePrompt(ph)+M.lead(t);
+  $('ccTag').textContent=M.name+' セット済み \u2713';
+  $('ccBody').textContent=M.body(t)+'　\uD83D\uDD11 '+ph.en;
+  $('ccard').hidden=false;
+  addDay(today);renderFire();renderCal();
+  copyText(p).then(function(){
+    toast(M.toast);
+    setTimeout(function(){location.href='https://chatgpt.com/?q='+encodeURIComponent(p)},600);
+  });
+}
+$('goBtn').addEventListener('click',function(){launch('go')});
+$('homeBtn').addEventListener('click',function(){launch('home')});
+$('bathBtn').addEventListener('click',function(){launch('bath')});
+$('freeBtn').addEventListener('click',function(){launch('free')});
+
+/* ---------- backup / restore ---------- */
+$('expBtn').addEventListener('click',function(){
+  copyText(JSON.stringify(Object.keys(daySet))).then(function(ok){
+    toast(ok?'記録をコピーした \u2713 メモ帳に貼って保管':'コピー失敗…');
+  });
+});
+$('impBtn').addEventListener('click',function(){
+  var s=window.prompt('記録データ（コピーしたやつ）を貼り付け：');
+  if(!s)return;
+  try{
+    var a=JSON.parse(s);
+    if(!Array.isArray(a))throw 0;
+    a.forEach(function(d){if(/^\d{4}-\d{2}-\d{2}$/.test(d))daySet[d]=1});
+    saveDays();renderFire();renderCal();
+    toast('復元した \u2713');
+  }catch(e){toast('形式が違うみたい…')}
+});
+
+/* ---------- init ---------- */
+(function(){
+  var ph=phraseOfDay();
+  $('pEn').textContent=ph.en;
+  $('pJa').textContent=ph.ja;
+})();
+buildDow();renderCal();renderFire();
+</script>
+</body>
+</html>
