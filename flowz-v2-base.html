@@ -53,6 +53,18 @@
   .pstrip .pk{display:block;font-size:10px;letter-spacing:1.5px;color:var(--amber-soft);font-weight:900;margin-bottom:3px}
   .pstrip b{display:block;font-size:15px;line-height:1.45}
   .pstrip .pja{display:block;font-size:12px;color:var(--muted);margin-top:2px}
+  /* daily phrase pack */
+  .pack{background:var(--bg2);border:1px solid var(--line);border-left:3px solid var(--cyan);border-radius:14px;padding:10px 13px 6px;margin-bottom:14px}
+  .pack-head{width:100%;background:none;border:none;font:inherit;color:inherit;text-align:left;padding:5px 0 10px;display:flex;align-items:center;justify-content:space-between;gap:10px;cursor:pointer}
+  .pack-head .kk{font-size:10px;letter-spacing:1.5px;color:var(--cyan-soft);font-weight:900}
+  .pack-arrow{color:var(--muted);font-size:11px;transition:transform .18s}
+  .pack.closed .pack-arrow{transform:rotate(-90deg)}
+  .pack.closed .pack-list{display:none}
+  .pack-item{border-top:1px solid var(--line);padding:6px 1px 7px;cursor:pointer;transition:opacity .08s}
+  .pack-item:active{opacity:.55}
+  .pack-cat{display:block;font-size:9px;line-height:1.2;letter-spacing:1.2px;font-weight:900;color:var(--muted)}
+  .pack-en{display:block;font-size:15px;font-weight:700;line-height:1.3}
+  .pack-ja{display:block;font-size:12px;line-height:1.3;color:var(--muted)}
   /* mode buttons */
   .modes{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:8px}
   .cbtn{border:none;cursor:pointer;font-weight:900;font-size:17px;letter-spacing:.5px;padding:17px 8px;border-radius:16px;display:flex;align-items:center;justify-content:center;gap:7px;transition:transform .08s}
@@ -120,6 +132,14 @@
     <span class="pk">&#128273; 今日のフレーズ — どこかで2回使う</span>
     <b id="pEn"></b>
     <span class="pja" id="pJa"></span>
+  </div>
+
+  <div class="pack" id="pack">
+    <button class="pack-head" id="packToggle" aria-expanded="true" aria-controls="packList">
+      <span class="kk">&#128172; 今日の5フレーズ — タップでコピー</span>
+      <span class="pack-arrow">&#9662;</span>
+    </button>
+    <div class="pack-list" id="packList"></div>
   </div>
 
   <div class="modes">
@@ -320,6 +340,117 @@ function phraseOfDay(){
   return PHRASES[localDays%PHRASES.length];
 }
 
+/* ---------- daily phrase pack (5 categories x 10) ---------- */
+var PACK=[
+ {cat:"DAILY LIFE",items:[
+  {en:"I'm on my way.",ja:"今から向かっとる"},
+  {en:"I'm heading home.",ja:"今から帰る"},
+  {en:"I'm almost home.",ja:"もうすぐ家に着く"},
+  {en:"I just got home.",ja:"今帰ってきたとこ"},
+  {en:"I'm almost at work.",ja:"もうすぐ職場に着く"},
+  {en:"I just got to work.",ja:"今職場に着いたとこ"},
+  {en:"I'm about to leave.",ja:"今から出るとこ"},
+  {en:"I'm running late.",ja:"ちょっと遅れとる"},
+  {en:"I'm still at work.",ja:"まだ仕事中"},
+  {en:"See you soon.",ja:"またあとでな"}
+ ]},
+ {cat:"KEEP TALKING",items:[
+  {en:"That makes sense.",ja:"なるほどな"},
+  {en:"I know what you mean.",ja:"言いたいことわかる"},
+  {en:"Really? What happened?",ja:"ほんまに？何があったん？"},
+  {en:"How about you?",ja:"そっちは？"},
+  {en:"What do you think?",ja:"どう思う？"},
+  {en:"Tell me more.",ja:"もっと聞かせて"},
+  {en:"That sounds fun.",ja:"楽しそうやん"},
+  {en:"Same here.",ja:"俺も同じ"},
+  {en:"Oh, I see.",ja:"そうなんや"},
+  {en:"Then what?",ja:"それでどうなったん？"}
+ ]},
+ {cat:"HELP ME UNDERSTAND",items:[
+  {en:"Could you say that again?",ja:"もう1回言ってくれる？"},
+  {en:"Can you say that more slowly?",ja:"もっとゆっくり言ってくれる？"},
+  {en:"Sorry, I didn't catch that.",ja:"ごめん、聞き取れんかった"},
+  {en:"What do you mean?",ja:"どういう意味？"},
+  {en:"Do you know what I mean?",ja:"言いたいこと伝わっとる？"},
+  {en:"Does that make sense?",ja:"これで伝わっとる？"},
+  {en:"You mean ___?",ja:"つまり〜ってこと？"},
+  {en:"One more time, please.",ja:"もう1回お願い"},
+  {en:"Let me think.",ja:"ちょっと考えさせて"},
+  {en:"I'm not sure.",ja:"ちょっと自信ない"}
+ ]},
+ {cat:"START A CONVERSATION",items:[
+  {en:"How was your day?",ja:"今日どうやった？"},
+  {en:"What are you up to?",ja:"今何しとん？"},
+  {en:"Guess what.",ja:"聞いて聞いて"},
+  {en:"By the way, ___",ja:"ところで〜"},
+  {en:"Can I ask you something?",ja:"ちょっと聞いてもいい？"},
+  {en:"How's it going?",ja:"調子どう？"},
+  {en:"What's new?",ja:"最近どう？"},
+  {en:"Do you have a minute?",ja:"ちょっとええ？"},
+  {en:"Long time no see.",ja:"久しぶり"},
+  {en:"Did you sleep well?",ja:"よう寝れた？"}
+ ]},
+ {cat:"ASK ABOUT ENGLISH",items:[
+  {en:"How do you say ___ in English?",ja:"「〜」って英語で何て言う？"},
+  {en:"What does ___ mean?",ja:"〜ってどういう意味？"},
+  {en:"How do you spell that?",ja:"それどう綴るん？"},
+  {en:"Is this natural?",ja:"これ自然な言い方？"},
+  {en:"Can I say ___?",ja:"〜って言ってもええ？"},
+  {en:"What's the difference?",ja:"違いは何？"},
+  {en:"How do you pronounce this?",ja:"これどう発音するん？"},
+  {en:"Is there a better way to say it?",ja:"もっとええ言い方ある？"},
+  {en:"What do you call this in English?",ja:"これ英語で何て言う？"},
+  {en:"Was that correct?",ja:"今の合っとった？"}
+ ]}
+];
+function dayNumber(){return Math.floor((Date.now()-new Date().getTimezoneOffset()*60000)/86400000)}
+function packHash(n){n=(n^61)^(n>>>16);n=n+(n<<3);n=n^(n>>>4);n=Math.imul(n,0x27d4eb2d);n=n^(n>>>15);return n>>>0}
+/* one seeded shuffle per category per 10-day cycle: every phrase comes up once before any repeat */
+function packOrder(n,seed){
+  var a=[],r=packHash(seed),i,j,t;
+  for(i=0;i<n;i++)a.push(i);
+  for(i=n-1;i>0;i--){r=packHash(r+0x6d2b79f5);j=r%(i+1);t=a[i];a[i]=a[j];a[j]=t}
+  return a;
+}
+function packOfDay(){
+  var d=dayNumber();
+  return PACK.map(function(g,i){
+    var n=g.items.length,cyc=Math.floor(d/n),slot=d%n;
+    var order=packOrder(n,i*7919+cyc*104729),t;
+    /* avoid a repeat across the cycle seam */
+    if(n>1&&order[0]===packOrder(n,i*7919+(cyc-1)*104729)[n-1]){t=order[0];order[0]=order[1];order[1]=t}
+    var it=g.items[order[slot]];
+    return {cat:g.cat,en:it.en,ja:it.ja};
+  });
+}
+function renderPack(){
+  var box=$('packList');box.innerHTML='';
+  packOfDay().forEach(function(p){
+    var row=document.createElement('div');row.className='pack-item';
+    var c=document.createElement('span');c.className='pack-cat';c.textContent=p.cat;
+    var e=document.createElement('span');e.className='pack-en';e.textContent=p.en;
+    var j=document.createElement('span');j.className='pack-ja';j.textContent=p.ja;
+    row.appendChild(c);row.appendChild(e);row.appendChild(j);
+    row.addEventListener('click',function(){
+      copyText(p.en).then(function(ok){toast(ok?'コピーした ✓':'コピー失敗…')});
+    });
+    box.appendChild(row);
+  });
+}
+(function(){
+  var pack=$('pack'),btn=$('packToggle');
+  function apply(open){
+    pack.classList.toggle('closed',!open);
+    btn.setAttribute('aria-expanded',open?'true':'false');
+  }
+  apply(store.get('fz_pack_open')!=='0');
+  btn.addEventListener('click',function(){
+    var open=pack.classList.contains('closed');
+    store.set('fz_pack_open',open?'1':'0');
+    apply(open);
+  });
+})();
+
 /* ---------- topics (interview style / always answerable) ---------- */
 var TOPICS=[
  {title:"Your music",ja:"自分の音楽",q:"What kind of music do you make?"},
@@ -434,7 +565,7 @@ $('impBtn').addEventListener('click',function(){
   $('pEn').textContent=ph.en;
   $('pJa').textContent=ph.ja;
 })();
-buildDow();renderCal();renderFire();
+buildDow();renderCal();renderFire();renderPack();
 </script>
 </body>
 </html>
