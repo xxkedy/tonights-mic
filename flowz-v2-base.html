@@ -55,13 +55,15 @@
   .pstrip .pja{display:block;font-size:12px;color:var(--muted);margin-top:2px}
   /* daily phrase pack */
   .pack{background:var(--bg2);border:1px solid var(--line);border-left:3px solid var(--cyan);border-radius:14px;padding:10px 13px 6px;margin-bottom:14px}
-  .pack-head{width:100%;background:none;border:none;font:inherit;color:inherit;text-align:left;padding:5px 0 10px;display:flex;align-items:center;justify-content:space-between;gap:10px;cursor:pointer}
-  .pack-head .kk{font-size:10px;letter-spacing:1.5px;color:var(--cyan-soft);font-weight:900}
+  .pack-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding-bottom:7px}
+  .pack-title{flex:1;min-width:0;background:none;border:none;font:inherit;color:inherit;text-align:left;padding:8px 0;display:flex;align-items:center;gap:7px;cursor:pointer}
+  .pack-title .kk{font-size:10px;letter-spacing:1.5px;color:var(--cyan-soft);font-weight:900}
   .pack-arrow{color:var(--muted);font-size:11px;transition:transform .18s}
+  .pack-more{flex:none;background:rgba(34,211,238,.10);border:1px solid rgba(34,211,238,.35);color:var(--cyan-soft);font-size:12px;font-weight:800;letter-spacing:.3px;padding:0 14px;min-height:38px;border-radius:999px;cursor:pointer;white-space:nowrap}
+  .pack-more:active{background:rgba(34,211,238,.22);transform:translateY(1px)}
   .pack.closed .pack-arrow{transform:rotate(-90deg)}
-  .pack.closed .pack-list{display:none}
-  .pack-item{border-top:1px solid var(--line);padding:6px 1px 7px;cursor:pointer;transition:opacity .08s}
-  .pack-item:active{opacity:.55}
+  .pack.closed .pack-list,.pack.closed .pack-more{display:none}
+  .pack-item{border-top:1px solid var(--line);padding:6px 1px 7px}
   .pack-cat{display:block;font-size:9px;line-height:1.2;letter-spacing:1.2px;font-weight:900;color:var(--muted)}
   .pack-en{display:block;font-size:15px;font-weight:700;line-height:1.3}
   .pack-ja{display:block;font-size:12px;line-height:1.3;color:var(--muted)}
@@ -135,10 +137,13 @@
   </div>
 
   <div class="pack" id="pack">
-    <button class="pack-head" id="packToggle" aria-expanded="true" aria-controls="packList">
-      <span class="kk">&#128172; 今日の5フレーズ — タップでコピー</span>
-      <span class="pack-arrow">&#9662;</span>
-    </button>
+    <div class="pack-head">
+      <button class="pack-title" id="packToggle" aria-expanded="true" aria-controls="packList">
+        <span class="kk">&#128172; 今日の5フレーズ</span>
+        <span class="pack-arrow">&#9662;</span>
+      </button>
+      <button class="pack-more" id="packMore" type="button">&#8635; Another 5</button>
+    </div>
     <div class="pack-list" id="packList"></div>
   </div>
 
@@ -412,33 +417,43 @@ function packOrder(n,seed){
   for(i=n-1;i>0;i--){r=packHash(r+0x6d2b79f5);j=r%(i+1);t=a[i];a[i]=a[j];a[j]=t}
   return a;
 }
-function packOfDay(){
-  var d=dayNumber();
+/* step 0 = today's fixed set; each "Another 5" walks every category one place along its order */
+function packOfDay(step){
+  var d=dayNumber(),s=step||0;
   return PACK.map(function(g,i){
     var n=g.items.length,cyc=Math.floor(d/n),slot=d%n;
     var order=packOrder(n,i*7919+cyc*104729),t;
     /* avoid a repeat across the cycle seam */
     if(n>1&&order[0]===packOrder(n,i*7919+(cyc-1)*104729)[n-1]){t=order[0];order[0]=order[1];order[1]=t}
-    var it=g.items[order[slot]];
+    var it=g.items[order[(slot+s)%n]];
     return {cat:g.cat,en:it.en,ja:it.ja};
   });
 }
+/* manual re-rolls live in sessionStorage only: same tab keeps them, a new day or new session starts from the fixed set */
+var packStep=0;
+function loadStep(){
+  try{
+    var raw=sessionStorage.getItem('fz_pack_step');
+    if(!raw)return 0;
+    var p=raw.split(':');
+    return (+p[0]===dayNumber())?(+p[1]||0):0;
+  }catch(e){return 0}
+}
+function saveStep(){try{sessionStorage.setItem('fz_pack_step',dayNumber()+':'+packStep)}catch(e){}}
 function renderPack(){
   var box=$('packList');box.innerHTML='';
-  packOfDay().forEach(function(p){
+  packOfDay(packStep).forEach(function(p){
     var row=document.createElement('div');row.className='pack-item';
     var c=document.createElement('span');c.className='pack-cat';c.textContent=p.cat;
     var e=document.createElement('span');e.className='pack-en';e.textContent=p.en;
     var j=document.createElement('span');j.className='pack-ja';j.textContent=p.ja;
     row.appendChild(c);row.appendChild(e);row.appendChild(j);
-    row.addEventListener('click',function(){
-      copyText(p.en).then(function(ok){toast(ok?'コピーした ✓':'コピー失敗…')});
-    });
     box.appendChild(row);
   });
 }
 (function(){
   var pack=$('pack'),btn=$('packToggle');
+  packStep=loadStep();
   function apply(open){
     pack.classList.toggle('closed',!open);
     btn.setAttribute('aria-expanded',open?'true':'false');
@@ -448,6 +463,9 @@ function renderPack(){
     var open=pack.classList.contains('closed');
     store.set('fz_pack_open',open?'1':'0');
     apply(open);
+  });
+  $('packMore').addEventListener('click',function(){
+    packStep++;saveStep();renderPack();
   });
 })();
 
